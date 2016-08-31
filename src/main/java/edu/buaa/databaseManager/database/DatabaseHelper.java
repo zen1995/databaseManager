@@ -98,9 +98,9 @@ public class DatabaseHelper {
 		return null;
 	}
 	
-	public static insertColumn(String tabeName,String name,){
-		
-	}
+//	public static insertColumn(String tabeName,String name,){
+//		
+//	}
 	
 	public static void main(String args[]) throws Exception {
 		// hasTable("persons");
