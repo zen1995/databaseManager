@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DatabaseResult {
-	private List<Pair> columns = new ArrayList<Pair>();
+	private List<Pair> columns = null;//new ArrayList<Pair>();
 	private List<Map<String, Object>> data = new ArrayList();
 
 	public DatabaseResult(ResultSet resultSet) throws SQLException {
@@ -21,17 +21,18 @@ public class DatabaseResult {
 		// System.out.println(m.getCatalogName(1));
 		// System.out.println(m.getColumnName(1));
 		// System.out.println(m.getColumnClassName(1));
-		for (int i = 1; i <= colmunCount; i++) {
-			Class c = null;
-			try {
-				c = Class.forName(m.getColumnClassName(i));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			columns.add(new Pair(m.getColumnName(i), c));
-		}
 		
+//		for (int i = 1; i <= colmunCount; i++) {
+//			Class c = null;
+//			try {
+//				c = Class.forName(m.getColumnClassName(i));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//
+//			columns.add(new Pair(m.getColumnName(i), c));
+//		}
+		columns = columns(resultSet);
 		while(resultSet.next()){
 			Map<String, Object> row = new HashMap<String, Object>();
 			for(int i=0;i < colmunCount;i++){
@@ -42,6 +43,25 @@ public class DatabaseResult {
 		}
 	}
 
+	public static List<Pair> columns(ResultSet resultSet)throws SQLException{
+		ResultSetMetaData m = resultSet.getMetaData();
+		List<Pair> columns = new ArrayList<Pair>();
+		int colmunCount = m.getColumnCount();
+		for (int i = 1; i <= colmunCount; i++) {
+			Class c = null;
+			try {
+				c = Class.forName(m.getColumnClassName(i));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			columns.add(new Pair(m.getColumnName(i), c));
+		}
+		return columns;
+	}
+	
+	
+	
 	public List<Pair> getColumns() {
 		return columns;
 	}
