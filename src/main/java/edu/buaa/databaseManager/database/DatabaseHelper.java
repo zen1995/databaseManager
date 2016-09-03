@@ -74,6 +74,12 @@ public class DatabaseHelper {
 		connection.close();
 	}
 
+	public static void clearTable(String tableName)throws SQLException{
+		assertHasTable(tableName);
+		DBConnection.execute("TRUNCATE table "+tableName);
+	}
+	
+	
 	public static List<Pair> getColumns(String tableName) throws SQLException {
 		if (!hasTable(tableName)) {
 			SQLException exception = new SQLException("table not found!" + tableName);
@@ -154,7 +160,7 @@ public class DatabaseHelper {
 			}
 		}
 		s += ")";
-		System.out.println(s);
+		//System.out.println(s);
 		PreparedStatement statement = connection.prepareStatement(s);
 		iterator = values.entrySet().iterator();
 		i=0;

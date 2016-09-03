@@ -89,4 +89,14 @@ public class TestDatabase extends TestCase {
 		map.put("sex", "male");
 		DatabaseHelper.insertRecord(testTableName, map);
 	}
+	
+	@Test
+	public void testClearRecord()throws Exception{
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("age", 1);
+		map.put("sex", "male");
+		DatabaseHelper.insertRecord(testTableName, map);
+		DatabaseHelper.clearTable(testTableName);
+		
+	}
 }
