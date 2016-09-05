@@ -74,12 +74,11 @@ public class DatabaseHelper {
 		connection.close();
 	}
 
-	public static void clearTable(String tableName)throws SQLException{
+	public static void clearTable(String tableName) throws SQLException {
 		assertHasTable(tableName);
-		DBConnection.execute("TRUNCATE table "+tableName);
+		DBConnection.execute("TRUNCATE table " + tableName);
 	}
-	
-	
+
 	public static List<Pair> getColumns(String tableName) throws SQLException {
 		if (!hasTable(tableName)) {
 			SQLException exception = new SQLException("table not found!" + tableName);
@@ -125,25 +124,26 @@ public class DatabaseHelper {
 			throws SQLException {
 		assertHasTable(tableName);
 		assertHasColumn(tableName, afterColumn);
-		
-		DBConnection.execute("ALTER TABLE `"+tableName+"` ADD `"+columnName+"` "+type.getTypeString()+" AFTER `"+afterColumn+"`; ");
+
+		DBConnection.execute("ALTER TABLE `" + tableName + "` ADD `" + columnName + "` " + type.getTypeString()
+				+ " AFTER `" + afterColumn + "`; ");
 		return false;
 
 	}
 
-	public static void deleteColumn(String tableName, String columnName)throws SQLException{
+	public static void deleteColumn(String tableName, String columnName) throws SQLException {
 		assertHasColumn(tableName, columnName);
-		DBConnection.execute("ALTER TABLE "+tableName+" DROP "+columnName+";");
+		DBConnection.execute("ALTER TABLE " + tableName + " DROP " + columnName + ";");
 	}
-	
-	public static void insertRecord(String tableName,Map<String,Object> values)throws Exception{
+
+	public static void insertRecord(String tableName, Map<String, Object> values) throws Exception {
 		Connection connection = DBConnection.getConnection();
 		String s = "insert into " + tableName + "  (";
 		Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
 		int size = values.size();
-		int i=0;
-		while(iterator.hasNext()){
-			Entry<String,Object> entry = iterator.next();
+		int i = 0;
+		while (iterator.hasNext()) {
+			Entry<String, Object> entry = iterator.next();
 			s += " " + entry.getKey() + " ";
 			if (i != size - 1) {
 				s += " , ";
@@ -151,21 +151,21 @@ public class DatabaseHelper {
 			i++;
 		}
 		s += " )";
-		
+
 		s += " values (";
-		for(i=0;i < size;i++){
+		for (i = 0; i < size; i++) {
 			s += " ? ";
-			if(i != size-1){
+			if (i != size - 1) {
 				s += " , ";
 			}
 		}
 		s += ")";
-		//System.out.println(s);
+		// System.out.println(s);
 		PreparedStatement statement = connection.prepareStatement(s);
 		iterator = values.entrySet().iterator();
-		i=0;
-		while(iterator.hasNext()){
-			Entry<String,Object> entry = iterator.next();
+		i = 0;
+		while (iterator.hasNext()) {
+			Entry<String, Object> entry = iterator.next();
 			statement.setObject(i + 1, entry.getValue());
 			i++;
 		}
@@ -174,7 +174,50 @@ public class DatabaseHelper {
 		statement.close();
 		connection.close();
 	}
-	
+
+	public static void insertRecord(String tableName, DatabaseResult result) throws SQLException {
+		Connection connection = DBConnection.getConnection();
+		List<Map<String, Object>> data = result.getData();
+		List<Pair> tableColumns = getColumns(tableName);
+		List<Pair> dataColumns = (List<Pair>) ((ArrayList<Pair>) result.getColumns()).clone();
+		dataColumns.removeAll(tableColumns);
+		List<Pair> importColumns = result.getColumns();
+		importColumns.removeAll(dataColumns);
+		int size = importColumns.size();
+
+		String s = "insert into " + tableName + "  (";
+		for (int i = 0; i < size; i++) {
+			s += " " + importColumns.get(i).key + " ";
+		}
+		s += " )";
+		s += " values (";
+		for (int i = 0; i < size; i++) {
+			s += " ? ";
+			if (i != size - 1) {
+				s += " , ";
+			}
+		}
+		s += ")";
+		for (Map<String, Object> values : data) {
+
+			Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
+
+			// System.out.println(s);
+			PreparedStatement statement = connection.prepareStatement(s);
+			iterator = values.entrySet().iterator();
+			for(int i=0;i< size;i++){
+				String key= importColumns.get(i).key;
+				statement.setObject(i+1,values.get(key));
+			}
+			
+			statement.executeUpdate();
+
+			statement.close();
+		}
+
+		connection.close();
+	}
+
 	public static DatabaseResult search(String tableName) throws SQLException {
 		Connection connection = DBConnection.getConnection();
 		Statement statement = connection.createStatement();

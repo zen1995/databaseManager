@@ -85,9 +85,15 @@ public class ExcelSheet {
 		Cell cell = getCell(row, column);
 		return cell.getStringCellValue();
 	}
+	
+	public int getLastRowIndex(){
+		return sheet.getLastRowNum();
+	}
+	
+	
 //	public static void main(String[] args) {
-//		// TODO Auto-generated method stub
-//
+//		Integer a =null;
+//		System.out.println(String.valueOf(a));
 //	}
 
 }

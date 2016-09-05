@@ -12,6 +12,12 @@ public class DatabaseResult {
 	private List<Pair> columns = null;//new ArrayList<Pair>();
 	private List<Map<String, Object>> data = new ArrayList();
 
+	public DatabaseResult(){
+		
+	}
+	
+	
+	
 	public DatabaseResult(ResultSet resultSet) throws SQLException {
 		ResultSetMetaData m = resultSet.getMetaData();
 		int colmunCount = m.getColumnCount();
@@ -70,6 +76,18 @@ public class DatabaseResult {
 		return data;
 	}
 	
+	public void setColumns(List<Pair> columns) {
+		this.columns = columns;
+	}
+
+
+
+	public void setData(List<Map<String, Object>> data) {
+		this.data = data;
+	}
+
+
+
 	@Override
 	public String toString(){
 		String s  = "[dataResult: \n"+columns+"\n"+data+"]";
