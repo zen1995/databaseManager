@@ -33,36 +33,65 @@ public class ExcelFile extends File {
 		super(pathname);
 		if (methord == 'w') {
 			String suffix = getFileSuffix();
-			if(suffix.equals("xls")){
+			if (suffix.equals("xls")) {
 				workbook = new HSSFWorkbook();
-			}
-			else if (suffix.equals("xlsx")) {
+			} else if (suffix.equals("xlsx")) {
 				workbook = new SXSSFWorkbook();
-			}
-			else {
-				System.out.println("undefined suffix:"+pathname);
+			} else {
+				throw new FileNotFoundException("undefined suffix:" + pathname);
 			}
 		}
-		if(methord == 'r'){
+		if (methord == 'r') {
 			String suffix = getFileSuffix();
-			if(suffix.equals("xls")){
-				//POIFSFileSystem fs =  new POIFSFileSystem(new FileInputStream(pathname));
+			if (suffix.equals("xls")) {
+				// POIFSFileSystem fs = new POIFSFileSystem(new
+				// FileInputStream(pathname));
 				workbook = new HSSFWorkbook(new FileInputStream(pathname));
-			}
-			else if (suffix.equals("xlsx")) {
+			} else if (suffix.equals("xlsx")) {
 				workbook = new XSSFWorkbook(new FileInputStream(pathname));
+			} else {
+				throw new FileNotFoundException("undefined suffix:" + pathname);
 			}
 		}
 
 	}
-	
+
 	public ExcelSheet getSheet(String name) {
 		Sheet sheet = workbook.getSheet(name);
-		if(sheet == null)sheet = workbook.createSheet(name);
+		if (sheet == null)
+			sheet = workbook.createSheet(name);
 		ExcelSheet s = new ExcelSheet(sheet);
 		return s;
 	}
+	public ExcelSheet getSheet(int index) {
+		Sheet sheet = workbook.getSheetAt(index);
+		if (sheet == null)
+			sheet = workbook.createSheet("sheet"+(index+1));
+		ExcelSheet s = new ExcelSheet(sheet);
+		return s;
+	}
+	public boolean hasSheet(String name) {
+		Sheet sheet = workbook.getSheet(name);
+		if (sheet == null)
+			return false;
+		return true;
+	}
+	
+	public boolean hasSheet(int index){
+		Sheet sheet = workbook.getSheetAt(index);
+		if (sheet == null)
+			return false;
+		return true;
+	}
+	
+	public ExcelExporter exporter() throws FileNotFoundException, IOException {
+		return new ExcelExporter(getAbsolutePath());
+	}
 
+	public ExcelReader reader() throws FileNotFoundException, IOException{
+		return new ExcelReader(getAbsolutePath());
+	}
+	
 	
 	public boolean writeToFile() throws FileNotFoundException, IOException {
 		FileOutputStream os = new FileOutputStream(getAbsolutePath());
@@ -85,8 +114,8 @@ public class ExcelFile extends File {
 		}
 
 	}
-	
-	public static void testRead() throws FileNotFoundException, IOException{
+
+	public static void testRead() throws FileNotFoundException, IOException {
 		ExcelFile excel = new ExcelFile("w.xls", 'r');
 		Sheet sheet = excel.workbook.getSheetAt(0);
 		Row row = sheet.getRow(1);
@@ -94,11 +123,12 @@ public class ExcelFile extends File {
 		System.out.println(cell.getStringCellValue());
 		int rows = sheet.getPhysicalNumberOfRows();
 		System.out.println(rows);
+		System.out.println(excel.getSheet("sheet1").getLastRowIndex());
 	}
 
-	public static void main(String[] args)throws Exception{
-		
-		testWrite();
+	public static void main(String[] args) throws Exception {
+
+		// testWrite();
 		testRead();
 		if (true)
 			return;

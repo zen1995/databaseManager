@@ -22,6 +22,10 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="C:/Users/Saber/Desktop/beautyeye-master/dist/beautyeye_lnf.jar"/>
+=======
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+>>>>>>> origin/sub-master
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

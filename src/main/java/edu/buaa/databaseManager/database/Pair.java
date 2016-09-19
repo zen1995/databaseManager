@@ -12,4 +12,16 @@ public class Pair {
 	public String toString(){
 		return "("+key+","+value+")";
 	}
+	
+	@Override
+	public boolean equals(Object object){
+		if(!(object instanceof Pair)){
+			return false;
+		}
+		Pair pair = (Pair) object;
+		if(key.equals(pair.key)){
+			return true;
+		}
+		return false;
+	}
 }
