@@ -17,7 +17,7 @@ import edu.buaa.databaseManager.excel.ExcelExporter;
 import edu.buaa.databaseManager.excel.ExcelFile;
 import edu.buaa.databaseManager.excel.ExcelReader;
 
-public class TestExportToExcel {
+public class TestExcel {
 	private String testTableName = "testTable";
 	
 	@BeforeClass
@@ -61,7 +61,25 @@ public class TestExportToExcel {
 		ExcelFile excelFile = new ExcelFile("testWrite.xls", 'r');
 		ExcelReader reader = excelFile.reader();
 		DatabaseResult result = reader.read();
+
+	}
+	@Test
+	public void testImport()throws Exception{
+		DatabaseHelper.clearTable(testTableName);
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("age", 1);
+		map.put("sex", "male");
+		DatabaseHelper.insertRecord(testTableName, map);
+		ExcelExporter excelExporter = new ExcelExporter("testWrite.xls");
+		excelExporter.export(DatabaseHelper.search(testTableName));
+		DatabaseHelper.clearTable(testTableName);
+		ExcelFile excelFile = new ExcelFile("testWrite.xls", 'r');
+		ExcelReader reader = excelFile.reader();
+		assertEquals(0,DatabaseHelper.search(testTableName).getData().size());
+		DatabaseResult result = reader.read();
 		System.out.println(result);
+		DatabaseHelper.insertRecord(testTableName,result);
+		assertEquals(1,DatabaseHelper.search(testTableName).getData().size());
 	}
 	
 

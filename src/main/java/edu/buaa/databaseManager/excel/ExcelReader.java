@@ -44,7 +44,7 @@ public class ExcelReader {
 				if(StringUtils.isNumeric(result)){
 					d = Double.valueOf(result);
 				}
-				else if (result.equals("NULL")) {
+				else if (result.equals("null")) {
 					d = null;
 				}
 				else {

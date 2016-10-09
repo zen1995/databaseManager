@@ -204,10 +204,13 @@ public class DatabaseHelper {
 		List<Pair> importColumns = result.getColumns();
 		importColumns.removeAll(dataColumns);
 		int size = importColumns.size();
-
+		System.out.println(importColumns);
 		String s = "insert into " + tableName + "  (";
 		for (int i = 0; i < size; i++) {
-			s += " " + importColumns.get(i).key + " ";
+			s += " " + importColumns.get(i).key ;
+			if (i != size - 1) {
+				s += " , ";
+			}
 		}
 		s += " )";
 		s += " values (";
@@ -218,6 +221,7 @@ public class DatabaseHelper {
 			}
 		}
 		s += ")";
+		System.out.println(s);
 		for (Map<String, Object> values : data) {
 
 			Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
