@@ -79,6 +79,26 @@ public class DatabaseHelper {
 		DBConnection.execute("TRUNCATE table " + tableName);
 	}
 
+	public static List<String> getTableNames()throws SQLException {
+		Connection connection = DBConnection.getConnection();
+		Statement statement = connection.createStatement();
+		//ResultSet result = statement.executeQuery("SELECT TABLE_NAME as tableName FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '"+DBConnection.databaseName+"'");
+		ResultSet result = statement.executeQuery("SELECT TABLE_NAME as tableName  FROM INFORMATION_SCHEMA.TABLES   WHERE TABLE_SCHEMA = '"+DBConnection.databaseName+"' ");
+
+		DatabaseResult databaseResult = new DatabaseResult(result);
+		result.close();
+		statement.close();
+		connection.close();
+		List<Map<String,Object>> list = databaseResult.getData();
+		List<String> returnList = new ArrayList<String>();
+		for(Map<String,Object> map : list){
+			returnList.add((String)map.get("tableName"));
+			//System.out.println(map);
+		}
+		return returnList;
+	}
+	
+	
 	public static List<Pair> getColumns(String tableName) throws SQLException {
 		if (!hasTable(tableName)) {
 			SQLException exception = new SQLException("table not found!" + tableName);
@@ -263,9 +283,12 @@ public class DatabaseHelper {
 	public static void main(String args[]) throws Exception {
 		// hasTable("persons");
 		// createCMRTable("cmr2")
-		List<Pair> list = new ArrayList<Pair>();
-		list.add(new Pair("id_P", 1));
-		list.add(new Pair("City", "北京"));
-		search("persons", list);
+//		List<Pair> list = new ArrayList<Pair>();
+//		list.add(new Pair("id_P", 1));
+//		list.add(new Pair("City", "北京"));
+//		search("persons", list);
+	
+		List<String> list = DatabaseHelper.getTableNames();
+		System.out.println(list);
 	}
 }

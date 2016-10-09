@@ -1,6 +1,7 @@
 package edu.buaa.databaseManager;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
@@ -15,7 +16,7 @@ import edu.buaa.databaseManager.database.DatabaseHelper;
 import junit.framework.TestCase;
 
 public class TestDatabase extends TestCase {
-	private String testTableName = "testTable";
+	private String testTableName = "testTable".toLowerCase();
 	
 	
 	@BeforeClass
@@ -47,6 +48,8 @@ public class TestDatabase extends TestCase {
 		DatabaseHelper.deleteTable(testTableName);
 	}
 	
+
+	
 	@Test
 	public void testGetColumns()throws Exception{
 		DatabaseHelper.getColumns(testTableName);
@@ -54,7 +57,16 @@ public class TestDatabase extends TestCase {
 		assertTrue(r);
 		
 	}
-	
+	@Test
+	public void testGetTableName()throws Exception{
+		List<String> list = DatabaseHelper.getTableNames();
+		//System.out.println(list);
+		//assertEquals(1,list.size());
+		//assertEquals(testTableName,list.get(0));
+		//System.out.println(testTableName);
+		//System.out.println(list.contains(testTableName));
+		assertTrue(list.contains(testTableName.toLowerCase()));
+	}
 	@Test
 	public void testHasColumn()throws Exception{
 		boolean r = DatabaseHelper.hasColumn(testTableName, "id");

@@ -10,10 +10,10 @@ import java.sql.*;;
 public class DBConnection {
 	static private final String driver = "com.mysql.jdbc.Driver";
 	static private final String preUrl = "jdbc:mysql://localhost:3306/";
-	static private final String postURL = "?characterEncoding=utf8";
+	static private final String postURL = "?useUnicode=true&characterEncoding=UTF-8&useOldAliasMetadataBehavior=true";
 	static private final String user = "root";
 	static private final String password = "123456";
-	static private final String databaseName = "hospital";
+	public static  final String databaseName = "hospital";
 	/* 初始化 */
 	static {
 		try {
@@ -54,6 +54,21 @@ public class DBConnection {
 		return connection;
 	}
 
+//	public static Connection getDBConnection() throws SQLException {
+//		Connection connection = null;
+//		try {
+//			connection = DriverManager.getConnection(preUrl, user, password);
+//
+//			// connection = DriverManager.getConnection(url,user,password);
+//			// stmt = connection.createStatement();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			throw e;
+//		}
+//		return connection;
+//	}
+	
+	
 	public static void execute(String sql) throws SQLException {
 		Statement statement = null;
 		Connection connection = null;
