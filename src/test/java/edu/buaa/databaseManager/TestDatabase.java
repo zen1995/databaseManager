@@ -13,6 +13,7 @@ import org.junit.Test;
 import edu.buaa.databaseManager.database.ColumnType;
 import edu.buaa.databaseManager.database.DBConnection;
 import edu.buaa.databaseManager.database.DatabaseHelper;
+import edu.buaa.databaseManager.database.Pair;
 import junit.framework.TestCase;
 
 public class TestDatabase extends TestCase {
@@ -57,6 +58,23 @@ public class TestDatabase extends TestCase {
 		assertTrue(r);
 		
 	}
+	
+	@Test
+	public void testCreateTable()throws Exception{
+		String s = "testc"+(int)(Math.random()*1000);
+		boolean r = DatabaseHelper.hasTable(s);
+		assertEquals(false,r);
+		DatabaseHelper.createTable(s);
+		r = DatabaseHelper.hasTable(s);
+		assertEquals(true,r);
+		List<Pair> list = DatabaseHelper.getColumns(s);
+		assertEquals(1, list.size());
+		assertEquals("id", list.get(0).key);
+		DatabaseHelper.deleteTable(s);
+		r = DatabaseHelper.hasTable(s);
+		assertEquals(false,r);
+	}
+	
 	@Test
 	public void testGetTableName()throws Exception{
 		List<String> list = DatabaseHelper.getTableNames();

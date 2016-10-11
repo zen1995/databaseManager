@@ -41,6 +41,23 @@ public class DatabaseHelper {
 		connection.close();
 		return;// r;
 	}
+	
+	
+	public static void createTable(String tableName)throws SQLException{
+		if(hasTable(tableName)){
+			SQLException exception = new SQLException("table:"+tableName+" already exist!");
+			throw exception;
+		}
+		Connection connection = DBConnection.getConnection();
+		Statement statement = connection.createStatement();
+		String s = "create TABLE " + tableName + " (";
+		s += " `id` INT NOT NULL AUTO_INCREMENT,\n";
+		s += " PRIMARY KEY (`id`)";
+		s += ") ENGINE = InnoDB;";
+		statement.execute(s);
+		statement.close();
+		connection.close();
+	}
 
 	public static boolean hasTable(String tableName) throws SQLException {
 		// SELECT * FROM INFORMATION_SCHEMA.TABLES
@@ -152,6 +169,10 @@ public class DatabaseHelper {
 	}
 
 	public static void deleteColumn(String tableName, String columnName) throws SQLException {
+		if(columnName.equals("id")){
+			SQLException exception = new SQLException("please do NOT try po remove column 'id'!");
+		}
+		
 		assertHasColumn(tableName, columnName);
 		DBConnection.execute("ALTER TABLE " + tableName + " DROP " + columnName + ";");
 	}
