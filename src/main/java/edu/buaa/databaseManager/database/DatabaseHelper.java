@@ -171,6 +171,7 @@ public class DatabaseHelper {
 	public static void deleteColumn(String tableName, String columnName) throws SQLException {
 		if(columnName.equals("id")){
 			SQLException exception = new SQLException("please do NOT try po remove column 'id'!");
+			throw exception;
 		}
 		
 		assertHasColumn(tableName, columnName);
