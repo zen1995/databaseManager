@@ -7,12 +7,15 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Add_Window extends JPanel{
 	private TextField name_in = new TextField();
 	private TextField item_in = new TextField();
 	private Message message;
+	
+	private int columnnum = 0;
 	
 	public Add_Window(Message messages){
 		this.message = messages;
@@ -25,9 +28,9 @@ public class Add_Window extends JPanel{
 		JLabel name  = new JLabel();
 		name.setText("表格名称");
 		JLabel item = new JLabel();
-		item.setText("项目名称");
+		item.setText("表格列数");
 		
-		/************文本输入框************/
+		/************文本输入�?************/
 		
 		name_in.setColumns(30);
 		name_in.setText("");
@@ -52,12 +55,7 @@ public class Add_Window extends JPanel{
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				String name = name_in.getText();
-				String item = item_in.getText();
-				name_in.setText("");
-				item_in.setText("");
-				message.setvalid(true);
-				message.setlistName(name);
+				confirm();
 			}});
 		
 		/***********布局************/
@@ -79,5 +77,39 @@ public class Add_Window extends JPanel{
 		this.add("South",third);
 	}
 	
+	
+	public void confirm(){
+		String name = name_in.getText();
+		String item = item_in.getText();
+		
+		
+		
+		//System.out.println(name.equals(""));
+		//System.out.println(item.equals(""));
+		if((!name.equals(""))&&(!item.equals(""))){
+			name_in.setText("");
+			item_in.setText("");
+			
+			columnnum = Integer.parseInt(item);
+			
+		//	System.out.println("adsssssssssssss"+columnnum);
+			
+			if((columnnum>0)){
+				
+				message.setvalid(true);
+				message.setlistName(name);
+				message.setNum(columnnum);
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "无效的列数！！");
+			}
+			
+			
+			
+			}
+		else{
+			JOptionPane.showMessageDialog(null, "请输入完整信息");
+		}
+	}
 	
 }
