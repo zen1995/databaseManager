@@ -8,6 +8,7 @@ public class Message {
 	private String listName;
 	private ArrayList<String> itemName;
 	private boolean valid =false;
+	private int num = 0;
 	
 	public  void setlistName(String name){
 		this.listName = name;
@@ -34,4 +35,11 @@ public class Message {
 	public void setvalid(boolean i){
 		 this.valid = i;
 	}
+	public int getNum() {
+		return num;
+	}
+	public void setNum(int num) {
+		this.num = num;
+	}
+	
 }
