@@ -1,6 +1,7 @@
 package edu.buaa.databaseManager.Frame;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,7 +22,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import edu.buaa.databaseManager.database.DatabaseHelper;
@@ -36,6 +40,11 @@ public class MyPane extends JPanel{
 	DatabaseHelper data;
 	public List<Pair> columnhead = new ArrayList<>();
 	JComboBox box = new JComboBox();
+	TextField textfiled = new TextField();
+	public String[] columnnames = null ;
+	public Object[][] columndata = null;
+	private DefaultTableModel tableModel;
+	 private JTable table;
 	
 	public MyPane(String name , DatabaseHelper helper){
 		this.panelname=name;
@@ -46,7 +55,7 @@ public class MyPane extends JPanel{
 		setLayout(new java.awt.BorderLayout());
 		
 		/************文本输入�?**************/
-		TextField textfiled = new TextField();
+		
 		textfiled.setColumns(30);
 		
 		/***********查询按钮*************/
@@ -56,7 +65,7 @@ public class MyPane extends JPanel{
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				search(helper);
+				search(data);
 			}});
 		
 		JPanel center = new JPanel();
@@ -79,23 +88,39 @@ public class MyPane extends JPanel{
 	
 		
 		/****************表格****************/
-		JTable table = new JTable();
 		
-		TableColumn column = null;  
-        int colunms = columnhead.size();  
+		
+		for(int i = 0;i<columnhead.size();i++){
+			columnnames[i] = columnhead.get(i).key;
+		}
+		
+		DatabaseResult dataresult = new DatabaseResult();
+		try {
+			dataresult = data.search(panelname);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<Map<String, Object>> attribute = new ArrayList();
+		attribute = dataresult.getData();
+		for(int i=0;i<attribute.size();i++){
+			for(int j = 0;i<columnhead.size();i++){
+				columndata[i][j] = attribute.get(i).get(columnhead.get(j));
+			}
+		}
+		tableModel = new DefaultTableModel(columndata,columnnames);
+        table = new JTable(tableModel);
         
-        
-        
-        for(int i = 0; i < colunms; i++)  
-        {  
-            column = table.getColumnModel().getColumn(i);  
-            /*将每一列的默认宽度设置为100*/  
-            column.setPreferredWidth(100);  
-        }  
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);  
-        JScrollPane scroll = new JScrollPane(table);  
-        
-        center.add(scroll,BorderLayout.CENTER);
+        /******************多选****************/
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); 
+		
+		table.setFillsViewportHeight(true);
+		JScrollPane scrollPane = new JScrollPane(table);
+		center.add(scrollPane);
+	
+		
+	//	table.setPreferredScrollableViewportSize(new Dimension(500, 0));
+     
         
 		/**************按钮******************/
 		JButton allselect = new JButton();
@@ -153,12 +178,12 @@ public class MyPane extends JPanel{
 		north.add(box);
 		north.add(check);
 		
-		center.add(table);	
+		//center.add(table);	
 		
-		south.add(allselect);
+	//	south.add(allselect);
 		south.add(add);
 		south.add(out);
-		south.add(dele);
+	//	south.add(dele);
 		south.add(alldele);
 	}
 	
@@ -267,6 +292,11 @@ public class MyPane extends JPanel{
 	
 	public void dele(){
 		
+		int select[] = table.getSelectedColumns();
+		
+		for(int i = 0 ;i<select.length;i++ ){
+		}
+		
 	}
 	
 	public void alldele(DatabaseHelper helper){
@@ -297,7 +327,46 @@ public class MyPane extends JPanel{
 	}
 	
 	public void search(DatabaseHelper helper){
+		
+		DatabaseResult newdata = new DatabaseResult();
 		box.getSelectedItem();
+		String attri = (String) box.getSelectedItem();
+		String infor = textfiled.getText();
+		if(infor.equals("")){
+			JOptionPane.showMessageDialog(null, "请输入有效的文本 ", "错误", JOptionPane.ERROR_MESSAGE);
+			return ;
+		}
+		Pair mypair  = new Pair(attri,infor);
+		
+		List<Pair> check = new ArrayList<>();
+		check.add(mypair);
+		
+		try {
+			newdata =	data.search(panelname, check);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		int num  = table.getRowCount();
+		for(int i = 0;i<num;i++){
+			tableModel.removeRow(0);	
+		}
+		
+		List<Map<String, Object>> attribute = new ArrayList();
+		attribute = newdata.getData();
+		
+		
+		for(int i=0;i<attribute.size();i++){
+			Object changes[] = null;
+			for(int j = 0;i<columnhead.size();i++){
+				changes[j] = attribute.get(i).get(columnhead.get(j));
+			}
+			tableModel.addRow(changes);
+		}
+		
+		
 		
 	}
 	
