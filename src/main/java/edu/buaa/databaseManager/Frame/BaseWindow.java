@@ -58,8 +58,8 @@ public class BaseWindow extends JFrame implements Runnable {
 	    
 	    lable.add("+",add_window);
 	   
-	    MyPane pane = new MyPane("hihi", helper);
-	    lable.add("hihi",pane);
+	   // MyPane pane = new MyPane("hihi", helper);
+	  //  lable.add("hihi",pane);
 	    lable.setSelectedIndex(lable.getTabCount()-1);
 	}
 	
