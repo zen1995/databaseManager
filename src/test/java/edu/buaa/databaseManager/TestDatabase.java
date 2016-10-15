@@ -1,5 +1,6 @@
 package edu.buaa.databaseManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class TestDatabase extends TestCase {
 		DatabaseHelper.deleteTable(testTableName);
 	}
 	
-
+	
 	
 	@Test
 	public void testGetColumns()throws Exception{
@@ -128,5 +129,20 @@ public class TestDatabase extends TestCase {
 		DatabaseHelper.insertRecord(testTableName, map);
 		DatabaseHelper.clearTable(testTableName);
 		
+	}
+	@Test
+	public void testDeleteRecord()throws Exception{
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("id", 1);
+		map.put("sex", "male");
+		DatabaseHelper.insertRecord(testTableName, map);
+		map.put("id", 2);
+		DatabaseHelper.insertRecord(testTableName, map);
+		assertEquals(2,DatabaseHelper.search(testTableName).getData().size());
+		List<Integer> deleteList = new ArrayList<>();
+		deleteList.add(1);
+		DatabaseHelper.deleteRecord(testTableName, deleteList);
+		assertEquals(1,DatabaseHelper.search(testTableName).getData().size());
+
 	}
 }

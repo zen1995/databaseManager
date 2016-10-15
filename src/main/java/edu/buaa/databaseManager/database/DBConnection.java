@@ -1,6 +1,9 @@
 package edu.buaa.databaseManager.database;
 
 import com.sun.rowset.CachedRowSetImpl;
+
+import edu.buaa.databaseManager.util.NetUtil;
+
 import javax.sql.RowSet;
 
 import java.io.IOException;

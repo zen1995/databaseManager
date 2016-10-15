@@ -12,8 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class DatabaseHelper {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class DatabaseHelper {
+	private static Logger logger = LoggerFactory.getLogger(DatabaseHelper.class);
 	public static void createCMRTable(String tableName) throws SQLException {
 		if (hasTable(tableName)) {
 			SQLException exception = new SQLException("table:" + tableName + " already exist!");
@@ -202,7 +205,6 @@ public class DatabaseHelper {
 			}
 		}
 		s += ")";
-		// System.out.println(s);
 		PreparedStatement statement = connection.prepareStatement(s);
 		iterator = values.entrySet().iterator();
 		i = 0;
@@ -243,7 +245,6 @@ public class DatabaseHelper {
 			}
 		}
 		s += ")";
-		System.out.println(s);
 		for (Map<String, Object> values : data) {
 
 			Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
@@ -255,15 +256,34 @@ public class DatabaseHelper {
 				String key= importColumns.get(i).key;
 				statement.setObject(i+1,values.get(key));
 			}
+			try {
+				statement.executeUpdate();
+			} catch (Exception e) {
+				
+			}
 			
-			statement.executeUpdate();
 
 			statement.close();
 		}
 
 		connection.close();
 	}
-
+	
+	public static void deleteRecord(String tableName,List<Integer> idList)throws SQLException{
+		Connection connection = DBConnection.getConnection();
+		for(int id : idList){
+			PreparedStatement statement = connection.prepareStatement("delete from "+tableName+" where `id` = ?");
+			//statement.setString(1, tableName);
+			statement.setInt(1, id);
+			statement.executeUpdate();
+			statement.close();
+			
+		}
+		connection.close();
+	}
+	
+	
+	
 	public static DatabaseResult search(String tableName) throws SQLException {
 		Connection connection = DBConnection.getConnection();
 		Statement statement = connection.createStatement();

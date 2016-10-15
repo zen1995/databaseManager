@@ -20,10 +20,11 @@ public class T {
 		Logger logger = LoggerFactory.getLogger(T.class);
 		logger.debug("a");
 		logger.warn("b");
+		logger.warn("a",new Exception("sssssssssss"));;
 		
-		for(int i=0;i < Math.pow(10, 4);i++){
-			logger.warn(String.valueOf(i));
-		}
+//		for(int i=0;i < Math.pow(10, 4);i++){
+//			logger.warn(String.valueOf(i));
+//		}
 		
 //		InputStream in = new FileInputStream("t1.properties");		
 //		Properties p = new Properties();

@@ -1,4 +1,4 @@
-package edu.buaa.databaseManager.database;
+package edu.buaa.databaseManager.util;
 
 
 import java.io.IOException;
