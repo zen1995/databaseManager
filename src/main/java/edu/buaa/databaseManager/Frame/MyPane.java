@@ -85,7 +85,7 @@ public class MyPane extends JPanel{
 			box.addItem(columnhead.get(i).key);
 		}
 		int num = box.getSelectedIndex();
-		System.out.println(num);  
+		//System.out.println(num);  
 		
 		
 		
@@ -96,7 +96,9 @@ public class MyPane extends JPanel{
 		
 		for(int i = 0;i<columnhead.size();i++){
 			columnnames.add(columnhead.get(i).key) ;
+			//System.out.println(i);
 		}
+		
 		
 		DatabaseResult dataresult = new DatabaseResult();
 		try {
@@ -108,11 +110,17 @@ public class MyPane extends JPanel{
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = dataresult.getData();
 		
+		
+	
+		
 		for(int i=0;i<attribute.size();i++){
+			Vector<Object> temp = new Vector();
 			for(int j = 0;j<columnhead.size();j++){
-				columndata.get(i).add(attribute.get(i).get(columnhead.get(j)));
-				//columndata[i][j] = attribute.get(i).get(columnhead.get(j));
+			
+				temp.add(attribute.get(i).get(columnhead.get(j).key));
+				
 			}
+			columndata.add(temp);
 		}
 		tableModel = new DefaultTableModel(columndata,columnnames);
         table = new JTable(tableModel);
@@ -137,13 +145,22 @@ public class MyPane extends JPanel{
 		JButton dele  = new JButton ();
 		JButton out = new JButton();
 		JButton alldele = new JButton();
+		JButton cleartable = new JButton();
 		
 		allselect.setText("全选");
+		cleartable.setText("清空表格数据");
 		add.setText("插入");
 		dele.setText("删除数据");
 		out.setText("导出");
 		alldele.setText("删除表格");
 		
+		
+		cleartable.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				clear();
+			}});
 		add.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -193,6 +210,7 @@ public class MyPane extends JPanel{
 		south.add(add);
 		south.add(out);
 	//	south.add(dele);
+		south.add(cleartable);
 		south.add(alldele);
 	}
 	
@@ -202,28 +220,10 @@ public class MyPane extends JPanel{
 	     if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
 	    	 
 	    	 /*******************写入*****************/
-	    	ExcelExporter excelExporter = null;
-			try {
-				excelExporter = new ExcelExporter("testWrite.xls");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	 		try {
-				excelExporter.export(DatabaseHelper.search(panelname));
-			} catch (IOException | SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	 		try {
-				DatabaseHelper.clearTable(panelname);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	    	
 	 		ExcelFile excelFile = null;
 			try {
-				excelFile = new ExcelFile("testWrite.xls", 'r');
+				excelFile = new ExcelFile(jfc.getSelectedFile().getAbsolutePath(), 'r');
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -237,6 +237,7 @@ public class MyPane extends JPanel{
 			}
 	 		
 	 		DatabaseResult result = reader.read();
+	 		System.out.println("sad"+result.toString());
 	 		System.out.println(result);
 	 		try {
 				DatabaseHelper.insertRecord(panelname,result);
@@ -247,8 +248,9 @@ public class MyPane extends JPanel{
 	 		
 	    	 
 	    	 
-	      System.out.println(jfc.getSelectedFile().getAbsolutePath());
+	      
 	     }
+	     refresh();
 	}
 	
 	public void out(){
@@ -368,11 +370,13 @@ public class MyPane extends JPanel{
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = newdata.getData();
 		
-		
+		//System.out.println(attribute.size());
+	//	System.out.println(attribute.toString());
 		for(int i=0;i<attribute.size();i++){
-			Object changes[] = null;
-			for(int j = 0;i<columnhead.size();i++){
-				changes[j] = attribute.get(i).get(columnhead.get(j));
+			Vector<Object> changes = new Vector();
+			for(int j = 0;j<columnhead.size();j++){
+				
+				changes.add(attribute.get(i).get(columnhead.get(j).key));
 			}
 			tableModel.addRow(changes);
 		}
@@ -381,4 +385,50 @@ public class MyPane extends JPanel{
 		
 	}
 	
+	public void refresh(){
+		
+		
+		int num  = table.getRowCount();
+		for(int i = 0;i<num;i++){
+			tableModel.removeRow(0);	
+		}
+		
+		
+		DatabaseResult dataresult = new DatabaseResult();
+		try {
+			dataresult = data.search(panelname);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<Map<String, Object>> attribute = new ArrayList();
+		attribute = dataresult.getData();
+		
+		Vector<Vector<Object>> newdata = new Vector();
+		for(int i=0;i<attribute.size();i++){
+			Vector<Object> temp = new Vector();
+			for(int j = 0;j<columnhead.size();j++){
+			
+				temp.add(attribute.get(i).get(columnhead.get(j).key));
+				
+			}
+			newdata.add(temp);
+		}
+		for(int i=0;i<attribute.size();i++){
+			tableModel.addRow(newdata.get(i));
+		}
+	}
+
+	public void clear(){
+		try {
+			data.clearTable(panelname);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int num  = table.getRowCount();
+		for(int i = 0;i<num;i++){
+			tableModel.removeRow(0);	
+		}
+	}
 }
