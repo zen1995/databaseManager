@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -149,14 +150,23 @@ public class MyPane extends JPanel{
 		JButton out = new JButton();
 		JButton alldele = new JButton();
 		JButton cleartable = new JButton();
+		JButton insert = new JButton();
+		
 		
 		allselect.setText("全选");
 		cleartable.setText("清空表格数据");
 		add.setText("插入");
-		dele.setText("删除数据");
+		dele.setText("删除所选数据");
+		insert.setText("插入数据");
 		out.setText("导出");
 		alldele.setText("删除表格");
 		
+		insert.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				insert();
+			}});
 		
 		cleartable.addActionListener(new ActionListener() {
 
@@ -210,9 +220,11 @@ public class MyPane extends JPanel{
 		//center.add(table);	
 		
 	//	south.add(allselect);
+		south.add(insert);
+		south.add(dele);
 		south.add(add);
 		south.add(out);
-	//	south.add(dele);
+	//	
 		south.add(cleartable);
 		south.add(alldele);
 	}
@@ -309,10 +321,17 @@ public class MyPane extends JPanel{
 	
 	public void dele(){
 		
-		int select[] = table.getSelectedColumns();
-		
-		for(int i = 0 ;i<select.length;i++ ){
+		int select[] = table.getSelectedRows();
+		table.getValueAt(select[0], 0);
+		Object id[] = new Object[select.length];
+		for(int i = 0;i<select.length;i++){
+			id[i] = table.getValueAt(select[i], 0);
+			//System.out.println(id[i]);
+			
 		}
+		
+		refresh();
+		
 		
 	}
 	
@@ -465,5 +484,26 @@ public class MyPane extends JPanel{
 		         header.setResizingColumn(column); // 此行很重要
 		         column.setWidth(width+myTable.getIntercellSpacing().width);
 		     }
+	}
+	
+	public void insert(){
+		
+		Map<String,Object> newdata = new HashMap();
+		for(int i =0;i<columnhead.size();i++){
+			
+			if(columnhead.get(i).key.equals("id")){
+				continue;
+			}
+			Object name = JOptionPane.showInputDialog("请输入"+columnhead.get(i).key+":");
+			newdata.put(columnhead.get(i).key, name);
+		}
+		
+		try {
+			data.insertRecord(panelname, newdata);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		refresh();
 	}
 }
