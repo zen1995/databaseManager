@@ -60,7 +60,7 @@ public class BaseWindow extends JFrame implements Runnable {
 	   
 	   // MyPane pane = new MyPane("hihi", helper);
 	  //  lable.add("hihi",pane);
-	    lable.setSelectedIndex(lable.getTabCount()-1);
+	    lable.setSelectedIndex(0);
 	}
 	
 	public void run() {
@@ -156,7 +156,7 @@ public class BaseWindow extends JFrame implements Runnable {
 		
 		MyPane newpane = new MyPane(message.getlistName(),myhelper);
 		this.lable.add(message.getlistName(),newpane);
-		
+		System.out.println(message.getlistName());
 	}
 	
 }
