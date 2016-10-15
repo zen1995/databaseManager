@@ -106,8 +106,9 @@ public class MyPane extends JPanel{
 		}
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = dataresult.getData();
+		
 		for(int i=0;i<attribute.size();i++){
-			for(int j = 0;i<columnhead.size();i++){
+			for(int j = 0;j<columnhead.size();j++){
 				columndata.get(i).add(attribute.get(i).get(columnhead.get(j)));
 				//columndata[i][j] = attribute.get(i).get(columnhead.get(j));
 			}
