@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -41,8 +42,10 @@ public class MyPane extends JPanel{
 	public List<Pair> columnhead = new ArrayList<>();
 	JComboBox box = new JComboBox();
 	TextField textfiled = new TextField();
-	public String[] columnnames = null ;
-	public Object[][] columndata = null;
+	//public String[] columnnames = null ;
+	public Vector<String> columnnames = new Vector<>();
+	public Vector<Vector<Object>>columndata = new Vector<>();
+	//public Object[][] columndata = null;
 	private DefaultTableModel tableModel;
 	 private JTable table;
 	
@@ -91,7 +94,7 @@ public class MyPane extends JPanel{
 		
 		
 		for(int i = 0;i<columnhead.size();i++){
-			columnnames[i] = columnhead.get(i).key;
+			columnnames.add(columnhead.get(i).key) ;
 		}
 		
 		DatabaseResult dataresult = new DatabaseResult();
@@ -103,9 +106,11 @@ public class MyPane extends JPanel{
 		}
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = dataresult.getData();
+		
 		for(int i=0;i<attribute.size();i++){
-			for(int j = 0;i<columnhead.size();i++){
-				columndata[i][j] = attribute.get(i).get(columnhead.get(j));
+			for(int j = 0;j<columnhead.size();j++){
+				columndata.get(i).add(attribute.get(i).get(columnhead.get(j)));
+				//columndata[i][j] = attribute.get(i).get(columnhead.get(j));
 			}
 		}
 		tableModel = new DefaultTableModel(columndata,columnnames);
@@ -166,7 +171,7 @@ public class MyPane extends JPanel{
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				alldele(helper);
+				alldele(data);
 			}});
 		
 		/***************布局*******************/
