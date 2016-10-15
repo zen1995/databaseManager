@@ -83,6 +83,9 @@ public class ExcelSheet {
 			return null;
 		}
 		Cell cell = getCell(row, column);
+		if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+			return String.valueOf(cell.getNumericCellValue());
+		}
 		return cell.getStringCellValue();
 	}
 	
