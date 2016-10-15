@@ -1,16 +1,16 @@
 package edu.buaa.databaseManager.Frame;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.TextField;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -27,6 +27,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 import edu.buaa.databaseManager.database.DatabaseHelper;
@@ -124,13 +125,15 @@ public class MyPane extends JPanel{
 		}
 		tableModel = new DefaultTableModel(columndata,columnnames);
         table = new JTable(tableModel);
+        FitTableColumns(table);
         
         /******************多选****************/
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); 
 		
 		table.setFillsViewportHeight(true);
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setPreferredSize(new Dimension(800, 500));
+		
+		scrollPane.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width, 500));
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS );
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		center.add(scrollPane);
@@ -217,9 +220,15 @@ public class MyPane extends JPanel{
 	public void add(){
 		JFrame f  = new JFrame();
 		JFileChooser jfc = new JFileChooser();
+		
 	     if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
 	    	 
 	    	 /*******************写入*****************/
+	    	 
+	    	 if(!((jfc.getSelectedFile().getAbsolutePath().endsWith(".xls"))||(jfc.getSelectedFile().getAbsolutePath().endsWith(".xlsx")))){
+				JOptionPane.showMessageDialog(null, "请选择excel文件！", "错误", JOptionPane.ERROR_MESSAGE);
+	    		 return;
+	    	 }
 	    	
 	 		ExcelFile excelFile = null;
 			try {
@@ -245,10 +254,7 @@ public class MyPane extends JPanel{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	 		
-	    	 
-	    	 
-	      
+	 	
 	     }
 	     refresh();
 	}
@@ -381,7 +387,7 @@ public class MyPane extends JPanel{
 			tableModel.addRow(changes);
 		}
 		
-		
+		textfiled.setText("");
 		
 	}
 	
@@ -420,15 +426,44 @@ public class MyPane extends JPanel{
 	}
 
 	public void clear(){
-		try {
-			data.clearTable(panelname);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		
+		int n = JOptionPane.showConfirmDialog(null, "确认将数据库全部删除吗?删除后数据将无法恢复！！", "确认删除框", JOptionPane.YES_NO_OPTION);  
+        if (n == JOptionPane.YES_OPTION) {  
+            try {
+            	data.clearTable(panelname);
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        } else if (n == JOptionPane.NO_OPTION) {  
+           
+        }  
 		int num  = table.getRowCount();
 		for(int i = 0;i<num;i++){
 			tableModel.removeRow(0);	
 		}
+	}
+	
+	public void FitTableColumns(JTable myTable){
+		  JTableHeader header = myTable.getTableHeader();
+		     int rowCount = myTable.getRowCount();
+
+		     Enumeration columns = myTable.getColumnModel().getColumns();
+		     while(columns.hasMoreElements()){
+		         TableColumn column = (TableColumn)columns.nextElement();
+		         int col = header.getColumnModel().getColumnIndex(column.getIdentifier());
+		         int width = (int)myTable.getTableHeader().getDefaultRenderer()
+		                 .getTableCellRendererComponent(myTable, column.getIdentifier()
+		                         , false, false, -1, col).getPreferredSize().getWidth();
+		         for(int row = 0; row<rowCount; row++){
+		             int preferedWidth = (int)myTable.getCellRenderer(row, col).getTableCellRendererComponent(myTable,
+		               myTable.getValueAt(row, col), false, false, row, col).getPreferredSize().getWidth();
+		             width = Math.max(width, preferedWidth);
+		         }
+		         header.setResizingColumn(column); // 此行很重要
+		         column.setWidth(width+myTable.getIntercellSpacing().width);
+		     }
 	}
 }

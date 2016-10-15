@@ -47,15 +47,15 @@ public class BaseWindow extends JFrame implements Runnable {
             }  
         }); 
 		setResizable(true);  
-	    setSize(800,700);  
+	    setSize(Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height);  
 	   
 	    add(lable);
 	    /*********************居中显示***********************/
-	    int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  
+	  /*  int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;  
         setLocation((screenWidth - 800)/2, (screenHeight-700)/2);  
 	    	
-	    
+	    */
 	    lable.add("+",add_window);
 	   
 	   // MyPane pane = new MyPane("hihi", helper);
@@ -134,7 +134,9 @@ public class BaseWindow extends JFrame implements Runnable {
 		
 		/***************插入创建表头**************************/
 		
+		
 		for(int i = 0;i<columns.size();i++){
+			System.out.println(columns.get(i).cname);
 			if(i==0){
 				try {
 					myhelper.insertColumn(pname, columns.get(i).cname,columns.get(i).cattribute, "id");
