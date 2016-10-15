@@ -1,3 +1,4 @@
+package edu.buaa.databaseManager.config;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,6 +9,9 @@ public class Config {
 	private static final String filePath = System.getProperty("user.dir") + "/config.properties";
 	private Properties properties;
 	private static Config instance = null;
+	
+	public static final String imageBaseDir = "imageBaseDir";
+	
 	private Config() throws Exception{
 		File file = new File(filePath);
 		if (!file.exists()) {
@@ -28,6 +32,14 @@ public class Config {
 		}
 	}
 
+	public String get(String key){
+		return properties.getProperty(key);
+	}
+	
+	public void set(String key,String value){
+		properties.setProperty(key, value);
+	}
+	
 	public static synchronized Config getInstance() {
 		if(instance == null){
 			try {
