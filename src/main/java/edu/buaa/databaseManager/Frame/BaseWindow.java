@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -49,7 +50,7 @@ public class BaseWindow extends JFrame implements Runnable {
         }); 
 		setResizable(true);  
 	    setSize(Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height-100);  
-	   
+	    
 	    add(lable);
 	    /*********************居中显示***********************/
 	  /*  int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  

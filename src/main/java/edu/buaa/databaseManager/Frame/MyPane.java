@@ -540,17 +540,40 @@ public class MyPane extends JPanel{
     	
           
         JMenuItem delMenItem = new JMenuItem();  
-        delMenItem.setText("修改此行数据");  
+        delMenItem.setText("修改此行数据    ");  
         delMenItem.addActionListener(new java.awt.event.ActionListener() {  
             public void actionPerformed(java.awt.event.ActionEvent evt) {  
                 //该操作需要做的事 
-            	System.out.println("asdadad");
+            	dataedit();
             }  
         });  
         mymenu.add(delMenItem);  
     }  
     
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {  
+    protected void dataedit() {
+		// TODO Auto-generated method stub
+    	
+    	int thisid = (int) table.getValueAt(table.getSelectedRow(), 0);
+    	Map<String,Object> newdata = new HashMap();
+		for(int i =0;i<columnhead.size();i++){
+			
+			if(columnhead.get(i).key.equals("id")){
+				continue;
+			}
+			Object name = JOptionPane.showInputDialog("请输入"+columnhead.get(i).key+":");
+			newdata.put(columnhead.get(i).key, name);
+		}
+		
+		try {
+			data.editRecord(panelname, thisid, newdata);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		refresh();
+	}
+
+	private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {  
     	  
         mouseRightButtonClick(evt);  
     } 
