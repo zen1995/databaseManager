@@ -5,6 +5,8 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,12 +22,15 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.MouseInputListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -50,12 +55,13 @@ public class MyPane extends JPanel{
 	public Vector<Vector<Object>>columndata = new Vector<>();
 	//public Object[][] columndata = null;
 	private DefaultTableModel tableModel;
-	 private JTable table;
-	
-	public MyPane(String name , DatabaseHelper helper){
+	private JTable table;
+	public DeleMessage delet;
+	public  JPopupMenu mymenu = new JPopupMenu();  
+	public MyPane(String name , DatabaseHelper helper,DeleMessage delete){
 		this.panelname=name;
 		this.data = helper;
-		
+		this.delet = delete;
 		initial();
 		
 		setLayout(new java.awt.BorderLayout());
@@ -84,8 +90,12 @@ public class MyPane extends JPanel{
 		
 		
 		for(int i = 0;i<columnhead.size();i++){
+			if(columnhead.get(i).key.equals("id")){
+				continue;
+			}
 			box.addItem(columnhead.get(i).key);
 		}
+		
 		int num = box.getSelectedIndex();
 		//System.out.println(num);  
 		
@@ -126,6 +136,9 @@ public class MyPane extends JPanel{
 		}
 		tableModel = new DefaultTableModel(columndata,columnnames);
         table = new JTable(tableModel);
+        
+        JTableHeader tableHeader = table.getTableHeader();
+        tableHeader.setReorderingAllowed(false);
         FitTableColumns(table);
         
         /******************多选****************/
@@ -134,7 +147,7 @@ public class MyPane extends JPanel{
 		table.setFillsViewportHeight(true);
 		JScrollPane scrollPane = new JScrollPane(table);
 		
-		scrollPane.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width, 500));
+		scrollPane.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-100, 500));
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS );
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		center.add(scrollPane);
@@ -207,6 +220,14 @@ public class MyPane extends JPanel{
 				// TODO Auto-generated method stub
 				alldele(data);
 			}});
+		
+		/************************右键菜单*********************************/
+		
+		table.addMouseListener(new java.awt.event.MouseAdapter() {  
+            public void mouseClicked(java.awt.event.MouseEvent evt) {  
+                jTable1MouseClicked(evt);  
+            }  
+		}); 
 		
 		/***************布局*******************/
 		this.add("Center",center);
@@ -323,13 +344,18 @@ public class MyPane extends JPanel{
 		
 		int select[] = table.getSelectedRows();
 		table.getValueAt(select[0], 0);
-		Object id[] = new Object[select.length];
+		List<Integer> id = new ArrayList<>();;
 		for(int i = 0;i<select.length;i++){
-			id[i] = table.getValueAt(select[i], 0);
+			id.add((Integer) table.getValueAt(select[i], 0));
 			//System.out.println(id[i]);
 			
 		}
-		
+		try {
+			data.deleteRecord(panelname,id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		refresh();
 		
 		
@@ -340,8 +366,10 @@ public class MyPane extends JPanel{
         if (n == JOptionPane.YES_OPTION) {  
             try {
 				helper.deleteTable(this.panelname);
+				delet.setIsdele(true);
+				delet.setPanelname(this);
 				JOptionPane.showMessageDialog(null, "重新启动之后生效！ ", "删除成功", JOptionPane.ERROR_MESSAGE);
-
+				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -359,7 +387,7 @@ public class MyPane extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		createPopupMenu();
 		
 		
 	}
@@ -506,4 +534,41 @@ public class MyPane extends JPanel{
 		}
 		refresh();
 	}
+	
+	
+    private void createPopupMenu() {  
+    	
+          
+        JMenuItem delMenItem = new JMenuItem();  
+        delMenItem.setText("修改此行数据");  
+        delMenItem.addActionListener(new java.awt.event.ActionListener() {  
+            public void actionPerformed(java.awt.event.ActionEvent evt) {  
+                //该操作需要做的事 
+            	System.out.println("asdadad");
+            }  
+        });  
+        mymenu.add(delMenItem);  
+    }  
+    
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {  
+    	  
+        mouseRightButtonClick(evt);  
+    } 
+    
+    private void mouseRightButtonClick(java.awt.event.MouseEvent evt) {  
+        //判断是否为鼠标的BUTTON3按钮，BUTTON3为鼠标右键  
+        if (evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {  
+            //通过点击位置找到点击为表格中的行  
+            int focusedRowIndex = table.rowAtPoint(evt.getPoint());  
+            if (focusedRowIndex == -1) {  
+                return;  
+            }  
+            //将表格所选项设为当前右键点击的行  
+            table.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);  
+           
+            //弹出菜单  
+            mymenu.show(table, evt.getX(), evt.getY());  
+        }  
+   
+    } 
 }

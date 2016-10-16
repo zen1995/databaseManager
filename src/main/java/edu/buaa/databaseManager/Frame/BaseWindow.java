@@ -23,7 +23,8 @@ public class BaseWindow extends JFrame implements Runnable {
 	
 //	JFrame frame = new JFrame();
 	JTabbedPane lable = new JTabbedPane();
-	Message message = new Message();
+	public Message message = new Message();
+	public DeleMessage delemessage = new DeleMessage();
 	Add_Window add_window = new Add_Window(message);
 	private DatabaseHelper myhelper = null ;
 	List<String> table = new ArrayList<>();
@@ -47,7 +48,7 @@ public class BaseWindow extends JFrame implements Runnable {
             }  
         }); 
 		setResizable(true);  
-	    setSize(Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height);  
+	    setSize(Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height-100);  
 	   
 	    add(lable);
 	    /*********************居中显示***********************/
@@ -74,13 +75,20 @@ public class BaseWindow extends JFrame implements Runnable {
 			}
 			if(message.getvalid()){
 				creatTable();
-				
-				
-				
+		
+			}
+			if(delemessage.isIsdele()){
+				deleTable();
 			}
 		}
 	}
 	
+	private void deleTable() {
+		// TODO Auto-generated method stub
+		
+		this.lable.remove(delemessage.getPanelname());
+	}
+
 	public void initial(){
 		try {
 			table = myhelper.getTableNames();
@@ -89,7 +97,7 @@ public class BaseWindow extends JFrame implements Runnable {
 			e.printStackTrace();
 		}
 		for(int i =0;i<table.size();i++){
-			MyPane pane = new MyPane(table.get(i),myhelper);
+			MyPane pane = new MyPane(table.get(i),myhelper,delemessage);
 			lable.add(table.get(i), pane);
 		}
 	}
@@ -156,7 +164,7 @@ public class BaseWindow extends JFrame implements Runnable {
 		}
 		
 		
-		MyPane newpane = new MyPane(message.getlistName(),myhelper);
+		MyPane newpane = new MyPane(message.getlistName(),myhelper,delemessage);
 		this.lable.add(message.getlistName(),newpane);
 		System.out.println(message.getlistName());
 	}
