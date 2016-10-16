@@ -15,8 +15,11 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.buaa.databaseManager.util.Util;
+
 public class DatabaseHelper {
 	private static Logger logger = LoggerFactory.getLogger(DatabaseHelper.class);
+
 	public static void createCMRTable(String tableName) throws SQLException {
 		if (hasTable(tableName)) {
 			SQLException exception = new SQLException("table:" + tableName + " already exist!");
@@ -44,11 +47,10 @@ public class DatabaseHelper {
 		connection.close();
 		return;// r;
 	}
-	
-	
-	public static void createTable(String tableName)throws SQLException{
-		if(hasTable(tableName)){
-			SQLException exception = new SQLException("table:"+tableName+" already exist!");
+
+	public static void createTable(String tableName) throws SQLException {
+		if (hasTable(tableName)) {
+			SQLException exception = new SQLException("table:" + tableName + " already exist!");
 			throw exception;
 		}
 		Connection connection = DBConnection.getConnection();
@@ -99,26 +101,29 @@ public class DatabaseHelper {
 		DBConnection.execute("TRUNCATE table " + tableName);
 	}
 
-	public static List<String> getTableNames()throws SQLException {
+	public static List<String> getTableNames() throws SQLException {
 		Connection connection = DBConnection.getConnection();
 		Statement statement = connection.createStatement();
-		//ResultSet result = statement.executeQuery("SELECT TABLE_NAME as tableName FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '"+DBConnection.databaseName+"'");
-		ResultSet result = statement.executeQuery("SELECT TABLE_NAME as tableName  FROM INFORMATION_SCHEMA.TABLES   WHERE TABLE_SCHEMA = '"+DBConnection.databaseName+"' ");
+		// ResultSet result = statement.executeQuery("SELECT TABLE_NAME as
+		// tableName FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA =
+		// '"+DBConnection.databaseName+"'");
+		ResultSet result = statement
+				.executeQuery("SELECT TABLE_NAME as tableName  FROM INFORMATION_SCHEMA.TABLES   WHERE TABLE_SCHEMA = '"
+						+ DBConnection.databaseName + "' ");
 
 		DatabaseResult databaseResult = new DatabaseResult(result);
 		result.close();
 		statement.close();
 		connection.close();
-		List<Map<String,Object>> list = databaseResult.getData();
+		List<Map<String, Object>> list = databaseResult.getData();
 		List<String> returnList = new ArrayList<String>();
-		for(Map<String,Object> map : list){
-			returnList.add((String)map.get("tableName"));
-			//System.out.println(map);
+		for (Map<String, Object> map : list) {
+			returnList.add((String) map.get("tableName"));
+			// System.out.println(map);
 		}
 		return returnList;
 	}
-	
-	
+
 	public static List<Pair> getColumns(String tableName) throws SQLException {
 		if (!hasTable(tableName)) {
 			SQLException exception = new SQLException("table not found!" + tableName);
@@ -172,19 +177,21 @@ public class DatabaseHelper {
 	}
 
 	public static void deleteColumn(String tableName, String columnName) throws SQLException {
-		if(columnName.equals("id")){
+		if (columnName.equals("id")) {
 			SQLException exception = new SQLException("please do NOT try po remove column 'id'!");
 			throw exception;
 		}
-		
+
 		assertHasColumn(tableName, columnName);
 		DBConnection.execute("ALTER TABLE " + tableName + " DROP " + columnName + ";");
 	}
 
-	public static void insertRecord(String tableName, Map<String, Object> values) throws Exception {
+	public static void insertRecord(String tableName, Map<String, Object> values) throws SQLException {
+		values = Util.removeNullKey(values);
 		Connection connection = DBConnection.getConnection();
-		String s = "insert into " + tableName + "  (";
 		Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
+		String s = "insert into " + tableName + "  (";
+		
 		int size = values.size();
 		int i = 0;
 		while (iterator.hasNext()) {
@@ -220,6 +227,7 @@ public class DatabaseHelper {
 	}
 
 	public static void insertRecord(String tableName, DatabaseResult result) throws SQLException {
+		System.err.println(result);
 		Connection connection = DBConnection.getConnection();
 		List<Map<String, Object>> data = result.getData();
 		List<Pair> tableColumns = getColumns(tableName);
@@ -228,62 +236,90 @@ public class DatabaseHelper {
 		List<Pair> importColumns = result.getColumns();
 		importColumns.removeAll(dataColumns);
 		int size = importColumns.size();
-		System.out.println(importColumns);
-		String s = "insert into " + tableName + "  (";
-		for (int i = 0; i < size; i++) {
-			s += " " + importColumns.get(i).key ;
-			if (i != size - 1) {
-				s += " , ";
-			}
-		}
-		s += " )";
-		s += " values (";
-		for (int i = 0; i < size; i++) {
-			s += " ? ";
-			if (i != size - 1) {
-				s += " , ";
-			}
-		}
-		s += ")";
+		// System.out.println(importColumns);
+
 		for (Map<String, Object> values : data) {
 
 			Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
+			String s = "insert into " + tableName + "  (";
+			int insertColmnCount = 0;
+			for (int i = 0; i < size; i++) {
+				if(values.get(importColumns.get(i)) != null){
+					s += " " + importColumns.get(i).key+" ";
+					s += " ,";
+					insertColmnCount++;
+				}
 
+			}
+			s = s.substring(0, s.length() - 1);
+			s += " )";
+			s += " values (";
+			for (int i = 0; i < insertColmnCount; i++) {
+				s += " ? ";
+				if (i != size - 1) {
+					s += " , ";
+				}
+			}
+			s += ")";
 			// System.out.println(s);
 			PreparedStatement statement = connection.prepareStatement(s);
 			iterator = values.entrySet().iterator();
-			for(int i=0;i< size;i++){
-				String key= importColumns.get(i).key;
-				statement.setObject(i+1,values.get(key));
+			for (int i = 0; i < size;) {
+				if(values.get(i) != null){
+					String key = importColumns.get(i).key;
+					statement.setObject(i + 1, values.get(key));
+					i++;
+				}
 			}
 			try {
 				statement.executeUpdate();
 			} catch (Exception e) {
-				
+				e.printStackTrace();
 			}
-			
 
 			statement.close();
 		}
 
 		connection.close();
 	}
-	
-	public static void deleteRecord(String tableName,List<Integer> idList)throws SQLException{
+
+	public static void deleteRecord(String tableName, List<Integer> idList) throws SQLException {
 		Connection connection = DBConnection.getConnection();
-		for(int id : idList){
-			PreparedStatement statement = connection.prepareStatement("delete from "+tableName+" where `id` = ?");
-			//statement.setString(1, tableName);
+		for (int id : idList) {
+			PreparedStatement statement = connection.prepareStatement("delete from " + tableName + " where `id` = ?");
+			// statement.setString(1, tableName);
 			statement.setInt(1, id);
 			statement.executeUpdate();
 			statement.close();
-			
+
 		}
 		connection.close();
 	}
-	
-	
-	
+
+	public static void editRecord(String tableNmae, int id, Map<String, Object> values) throws SQLException {
+		Connection connection = DBConnection.getConnection();
+		String sql = "update `" + tableNmae + "` set ";
+		Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Object> entry = iterator.next();
+			sql += " " + entry.getKey() + "= ? ";
+			sql += ",";
+		}
+		sql = sql.substring(0, sql.length() - 1);
+		sql += " where id = ? ";
+		PreparedStatement statement = connection.prepareStatement(sql);
+		iterator = values.entrySet().iterator();
+		int i = 1;
+		while (iterator.hasNext()) {
+			statement.setObject(i, iterator.next().getValue());
+			i++;
+		}
+		statement.setInt(i, id);
+		statement.executeUpdate();
+		connection.close();
+
+	}
+
 	public static DatabaseResult search(String tableName) throws SQLException {
 		Connection connection = DBConnection.getConnection();
 		Statement statement = connection.createStatement();
@@ -329,11 +365,11 @@ public class DatabaseHelper {
 	public static void main(String args[]) throws Exception {
 		// hasTable("persons");
 		// createCMRTable("cmr2")
-//		List<Pair> list = new ArrayList<Pair>();
-//		list.add(new Pair("id_P", 1));
-//		list.add(new Pair("City", "北京"));
-//		search("persons", list);
-	
+		// List<Pair> list = new ArrayList<Pair>();
+		// list.add(new Pair("id_P", 1));
+		// list.add(new Pair("City", "北京"));
+		// search("persons", list);
+
 		List<String> list = DatabaseHelper.getTableNames();
 		System.out.println(list);
 	}

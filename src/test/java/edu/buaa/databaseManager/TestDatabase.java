@@ -145,4 +145,19 @@ public class TestDatabase extends TestCase {
 		assertEquals(1,DatabaseHelper.search(testTableName).getData().size());
 
 	}
+	
+	@Test
+	public void testEdit()throws Exception{
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("id", 1);
+		map.put("sex", "male");
+		DatabaseHelper.insertRecord(testTableName, map);
+		List<Map<String, Object>> data = DatabaseHelper.search(testTableName).getData();
+		assertEquals(1,data.size());
+		assertEquals("male",data.get(0).get("sex"));
+		map.put("sex","female");
+		DatabaseHelper.editRecord(testTableName,1,map);
+		data = DatabaseHelper.search(testTableName).getData();
+		assertEquals("female",data.get(0).get("sex"));
+	}
 }
