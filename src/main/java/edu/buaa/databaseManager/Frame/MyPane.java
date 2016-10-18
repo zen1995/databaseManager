@@ -1,15 +1,13 @@
 package edu.buaa.databaseManager.Frame;
 
-import java.awt.Component;
-import java.awt.Container;
+
 import java.awt.Dimension;
-import java.awt.LayoutManager;
+
 import java.awt.TextField;
-import java.awt.Toolkit;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,7 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import java.awt.Graphics;
+
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -46,7 +44,7 @@ import edu.buaa.databaseManager.database.Pair;
 import edu.buaa.databaseManager.excel.ExcelExporter;
 import edu.buaa.databaseManager.excel.ExcelFile;
 import edu.buaa.databaseManager.excel.ExcelReader;
-import edu.buaa.databaseManager.util.NetUtil;
+
 import edu.buaa.databaseManager.util.Util;
 
 public class MyPane extends JPanel{
@@ -62,7 +60,7 @@ public class MyPane extends JPanel{
 	private JTable table;
 	public DeleMessage delet;
 	public  JPopupMenu mymenu = new JPopupMenu();  
-	public MyPane(String name , DatabaseHelper helper,DeleMessage delete){
+	public MyPane(String name , DatabaseHelper helper,DeleMessage delete) throws SQLException{
 		this.panelname=name;
 		this.data = helper;
 		this.delet = delete;
@@ -81,7 +79,12 @@ public class MyPane extends JPanel{
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				search(data);
+				try {
+					search(data);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}});
 		
 		JPanel center = new JPanel();
@@ -100,9 +103,7 @@ public class MyPane extends JPanel{
 			box.addItem(columnhead.get(i).key);
 		}
 		
-		int num = box.getSelectedIndex();
-		//System.out.println(num);  
-		
+		int num = box.getSelectedIndex();	
 		
 		
 	
@@ -112,17 +113,14 @@ public class MyPane extends JPanel{
 		
 		for(int i = 0;i<columnhead.size();i++){
 			columnnames.add(columnhead.get(i).key) ;
-			//System.out.println(i);
+			
 		}
 		
 		
 		DatabaseResult dataresult = new DatabaseResult();
-		try {
-			dataresult = data.search(panelname);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		dataresult = data.search(panelname);
+	
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = dataresult.getData();
 		
@@ -153,14 +151,12 @@ public class MyPane extends JPanel{
 		table.setFillsViewportHeight(true);
 		JScrollPane scrollPane = new JScrollPane(table);
 		
-	
+		center.setLayout(new java.awt.BorderLayout());
 		scrollPane.setPreferredSize(new Dimension(800, 500));
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS );
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		center.add(scrollPane);
-	
-		
-	//	table.setPreferredScrollableViewportSize(new Dimension(500, 0));
+
      
         
 		/**************按钮******************/
@@ -185,27 +181,57 @@ public class MyPane extends JPanel{
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				insert();
+				try {
+					insert();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "插入失败！");
+					return;
+					
+				}
 			}});
 		
 		cleartable.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				clear();
+				try {
+					clear();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "清空失败！");
+					return;
+				}
 			}});
 		add.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				add();
+				
+					try {
+						add();
+					} catch (IOException | SQLException e) {
+						// TODO Auto-generated catch block
+						
+						JOptionPane.showMessageDialog(null, "添加数据失败！");
+						return;
+					}
+				
 			}});
 		
 		out.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				out();
+				
+					try {
+						out();
+					} catch (SQLException | IOException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, "导出失败！");
+						return;
+					}
+				
 			}});
 		
 		allselect.addActionListener(new ActionListener() {
@@ -219,13 +245,25 @@ public class MyPane extends JPanel{
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				dele();
+				try {
+					dele();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "删除失败！");
+					return;
+				}
 			}});
 		alldele.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				alldele(data);
+				try {
+					alldele(data);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "删除表格失败！");
+					return;
+				}
 			}});
 		
 		/************************右键菜单*********************************/
@@ -244,20 +282,17 @@ public class MyPane extends JPanel{
 		north.add(textfiled);
 		north.add(box);
 		north.add(check);
-		
-		//center.add(table);	
-		
-	//	south.add(allselect);
+
 		south.add(insert);
 		south.add(dele);
 		south.add(add);
 		south.add(out);
-	//	
+	
 		south.add(cleartable);
 		south.add(alldele);
 	}
 	
-	public void add(){
+	public void add() throws FileNotFoundException, IOException, SQLException{
 		JFrame f  = new JFrame();
 		JFileChooser jfc = new JFileChooser();
 		
@@ -271,35 +306,25 @@ public class MyPane extends JPanel{
 	    	 }
 	    	
 	 		ExcelFile excelFile = null;
-			try {
-				excelFile = new ExcelFile(jfc.getSelectedFile().getAbsolutePath(), 'r');
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			excelFile = new ExcelFile(jfc.getSelectedFile().getAbsolutePath(), 'r');
+			
 	 		ExcelReader reader = null;
-			try {
-				reader = excelFile.reader();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			reader = excelFile.reader();
+			
 	 		
 	 		DatabaseResult result = reader.read();
-	 		System.out.println("sad"+result.toString());
-	 		System.out.println(result);
-	 		try {
-				DatabaseHelper.insertRecord(panelname,result);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+	 		
+			DatabaseHelper.insertRecord(panelname,result);
+			
 	 	
 	     }
 	     refresh();
 	}
 	
-	public void out(){
+	public void out() throws SQLException, FileNotFoundException, IOException{
 		FileNameExtensionFilter filter=new FileNameExtensionFilter("*.xls","xls");
 		JFileChooser fc=new JFileChooser();
 		fc.setFileFilter(filter);
@@ -310,36 +335,21 @@ public class MyPane extends JPanel{
 			if (!file.getPath().endsWith(".xls")) {
 				file=new File(file.getPath()+".xls");
 			}
-			System.out.println("file path="+file.getPath());
+			
 			
 			
 			/***************************导出**************************/
 			DatabaseResult results = null;
-			try {
-				results = data.search(panelname);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			results = data.search(panelname);
+			
 			ExcelExporter excelExporter = null;
-			try {
-				excelExporter = new ExcelExporter(file.getPath());
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				excelExporter.export(results);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			excelExporter = new ExcelExporter(file.getPath());
+			
+			
+			excelExporter.export(results);
+			
 		}
 	}
 	
@@ -347,59 +357,49 @@ public class MyPane extends JPanel{
 		
 	}
 	
-	public void dele(){
+	public void dele() throws SQLException{
 		
 		int select[] = table.getSelectedRows();
 		table.getValueAt(select[0], 0);
 		List<Integer> id = new ArrayList<>();;
 		for(int i = 0;i<select.length;i++){
 			id.add((Integer) table.getValueAt(select[i], 0));
-			//System.out.println(id[i]);
+		
 			
 		}
-		try {
-			data.deleteRecord(panelname,id);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		data.deleteRecord(panelname,id);
+		
 		refresh();
 		
 		
 	}
 	
-	public void alldele(DatabaseHelper helper){
+	public void alldele(DatabaseHelper helper) throws SQLException{
 	    int n = JOptionPane.showConfirmDialog(null, "确认将数据库全部删除吗?删除后数据将无法恢复！！", "确认删除框", JOptionPane.YES_NO_OPTION);  
         if (n == JOptionPane.YES_OPTION) {  
-            try {
+           
 				helper.deleteTable(this.panelname);
 				delet.setIsdele(true);
 				delet.setPanelname(this);
 				JOptionPane.showMessageDialog(null, "重新启动之后生效！ ", "删除成功", JOptionPane.ERROR_MESSAGE);
-				
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
         } else if (n == JOptionPane.NO_OPTION) {  
-           
+           return;
         }  
 	}
 	
-	public void initial(){
+	public void initial() throws SQLException{
 		
-		try {
-			columnhead = data.getColumns(this.panelname);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		columnhead = data.getColumns(this.panelname);
+		
 		createPopupMenu();
 		
 		
 	}
 	
-	public void search(DatabaseHelper helper){
+	public void search(DatabaseHelper helper) throws SQLException{
 		
 		DatabaseResult newdata = new DatabaseResult();
 		box.getSelectedItem();
@@ -414,13 +414,9 @@ public class MyPane extends JPanel{
 		List<Pair> check = new ArrayList<>();
 		check.add(mypair);
 		
-		try {
-			newdata =	data.search(panelname, check);
+		
+		newdata =	data.search(panelname, check);
 			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		int num  = table.getRowCount();
 		for(int i = 0;i<num;i++){
@@ -430,8 +426,7 @@ public class MyPane extends JPanel{
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = newdata.getData();
 		
-		//System.out.println(attribute.size());
-	//	System.out.println(attribute.toString());
+		
 		for(int i=0;i<attribute.size();i++){
 			Vector<Object> changes = new Vector();
 			for(int j = 0;j<columnhead.size();j++){
@@ -445,7 +440,7 @@ public class MyPane extends JPanel{
 		
 	}
 	
-	public void refresh(){
+	public void refresh() throws SQLException{
 		
 		
 		int num  = table.getRowCount();
@@ -455,12 +450,9 @@ public class MyPane extends JPanel{
 		
 		
 		DatabaseResult dataresult = new DatabaseResult();
-		try {
-			dataresult = data.search(panelname);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		dataresult = data.search(panelname);
+		
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = dataresult.getData();
 		
@@ -479,20 +471,17 @@ public class MyPane extends JPanel{
 		}
 	}
 
-	public void clear(){
+	public void clear() throws SQLException{
 		
 		
 		int n = JOptionPane.showConfirmDialog(null, "确认将数据库全部删除吗?删除后数据将无法恢复！！", "确认删除框", JOptionPane.YES_NO_OPTION);  
         if (n == JOptionPane.YES_OPTION) {  
-            try {
+           
             	data.clearTable(panelname);
 
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
         } else if (n == JOptionPane.NO_OPTION) {  
-           
+           return;
         }  
 		int num  = table.getRowCount();
 		for(int i = 0;i<num;i++){
@@ -517,11 +506,14 @@ public class MyPane extends JPanel{
 		             width = Math.max(width, preferedWidth);
 		         }
 		         header.setResizingColumn(column); // 此行很重要
+		         if(width<100){
+		        	 width = 100;
+		         }
 		         column.setWidth(width+myTable.getIntercellSpacing().width);
 		     }
 	}
 	
-	public void insert(){
+	public void insert() throws SQLException{
 		
 		Map<String,Object> newdata = new HashMap();
 		for(int i =0;i<columnhead.size();i++){
@@ -538,12 +530,9 @@ public class MyPane extends JPanel{
 			newdata.put(columnhead.get(i).key, name);
 		}
 		
-		try {
-			data.insertRecord(panelname, newdata);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		data.insertRecord(panelname, newdata);
+		
 		refresh();
 	}
 	
@@ -562,21 +551,42 @@ public class MyPane extends JPanel{
         delMenItem.addActionListener(new java.awt.event.ActionListener() {  
             public void actionPerformed(java.awt.event.ActionEvent evt) {  
                 //该操作需要做的事 
-            	dataedit();
+            	try {
+					dataedit();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "修改失败！");
+					return;
+					
+				}
             }  
         });  
         
         openimage.addActionListener(new java.awt.event.ActionListener() {  
             public void actionPerformed(java.awt.event.ActionEvent evt) {  
                 //该操作需要做的事 
-            	openimage();
+            	
+					try {
+						openimage();
+					} catch (SQLException | IOException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, "打开图片失败！");
+						return;
+					}
+				
             }  
         }); 
         
         insertImage.addActionListener(new java.awt.event.ActionListener() {  
             public void actionPerformed(java.awt.event.ActionEvent evt) {  
                 //该操作需要做的事 
-            	insertimage();
+            	try {
+					insertimage();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "插入图片失败！");
+					return;
+				}
             }  
         });  
         
@@ -585,7 +595,7 @@ public class MyPane extends JPanel{
         mymenu.add(openimage);
     }  
     
-    protected void openimage() {
+    protected void openimage() throws SQLException, IOException {
 		// TODO Auto-generated method stub
 		
     	int k = table.getSelectedRow();
@@ -594,12 +604,9 @@ public class MyPane extends JPanel{
 		Pair idpair = new Pair("id",id);
 		pairs.add(idpair);
 		DatabaseResult result = new DatabaseResult();
-		try {
-			 result=data.search(panelname, pairs);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		result=data.search(panelname, pairs);
+		
 		
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = result.getData();
@@ -614,27 +621,23 @@ public class MyPane extends JPanel{
     	Object path  = attribute.get(0).get(type);
     	
     	File file=new File((String)path);    
-		System.out.println("asdsda"+Config.getInstance().get("programDir"));
 
-    	/*if (!new File(Config.getInstance().get("programDir")).exists()){
-    		System.out.println("asdsda"+Config.getInstance().get("programDir"));
+
+    	if (!new File(Config.getInstance().get("programeDir")).exists()){
     		Add_Window get = new Add_Window(null);
     		get.set();
     	}
-    	else{*/
+    	else{
     		Util util = new Util();
-        	try {
-    			util.run("C:\\Users\\Saber\\Desktop\\数据库\\SYNGO_FV\\SYNGO_FV.EXE", (String)path);
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    	//}
+        	
+    		util.run(Config.getInstance().get("programeDir"), (String)path);
+    		
+    	}
     	
     	
 	}
 
-	protected void insertimage() {
+	protected void insertimage() throws SQLException {
 		// TODO Auto-generated method stub
 		
 		int k = table.getSelectedRow();
@@ -643,12 +646,9 @@ public class MyPane extends JPanel{
 		Pair idpair = new Pair("id",id);
 		pairs.add(idpair);
 		DatabaseResult result = new DatabaseResult();
-		try {
-			 result=data.search(panelname, pairs);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+		result=data.search(panelname, pairs);
+		
 		
 		List<Map<String, Object>> attribute = new ArrayList();
 		attribute = result.getData();
@@ -667,21 +667,18 @@ public class MyPane extends JPanel{
 		JFileChooser jfc = new JFileChooser();
 		jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	    if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
-	    	 System.out.println(jfc.getSelectedFile().getAbsolutePath());
+	    	
 	    	 attribute.get(0).put(type,jfc.getSelectedFile().getAbsolutePath());
-	    	 try {
-				data.editRecord(panelname, (int)id, attribute.get(0));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	    	 
+			data.editRecord(panelname, (int)id, attribute.get(0));
+			
 	    }
 	    
 	    refresh();
     	
 	}
 
-	protected void dataedit() {
+	protected void dataedit() throws SQLException {
 		// TODO Auto-generated method stub
     	
     	int thisid = (int) table.getValueAt(table.getSelectedRow(), 0);
@@ -700,12 +697,9 @@ public class MyPane extends JPanel{
 			newdata.put(columnhead.get(i).key, name);
 		}
 		
-		try {
-			data.editRecord(panelname, thisid, newdata);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		data.editRecord(panelname, thisid, newdata);
+		
 		refresh();
 	}
 
