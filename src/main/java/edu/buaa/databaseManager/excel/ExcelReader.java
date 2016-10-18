@@ -41,7 +41,10 @@ public class ExcelReader {
 			for(int currentColumn = 0;currentColumn < columnCount;currentColumn++){
 				String result = sheet.readCell(i, currentColumn);
 				Object d = null;
-				if(StringUtils.isNumeric(result)){
+				if(result.replaceAll(" ","").equals("")){
+					d = null;
+				}
+				else if(StringUtils.isNumeric(result)){
 					d = Double.valueOf(result);
 				}
 				else if (result.equals("null")) {

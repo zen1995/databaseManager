@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -23,7 +24,8 @@ public class BaseWindow extends JFrame implements Runnable {
 	
 //	JFrame frame = new JFrame();
 	JTabbedPane lable = new JTabbedPane();
-	Message message = new Message();
+	public Message message = new Message();
+	public DeleMessage delemessage = new DeleMessage();
 	Add_Window add_window = new Add_Window(message);
 	private DatabaseHelper myhelper = null ;
 	List<String> table = new ArrayList<>();
@@ -47,20 +49,20 @@ public class BaseWindow extends JFrame implements Runnable {
             }  
         }); 
 		setResizable(true);  
-	    setSize(800,700);  
-	   
+	    setSize(Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height-100);  
+	    
 	    add(lable);
 	    /*********************居中显示***********************/
-	    int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  
+	  /*  int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;  
         setLocation((screenWidth - 800)/2, (screenHeight-700)/2);  
 	    	
-	    
+	    */
 	    lable.add("+",add_window);
 	   
 	   // MyPane pane = new MyPane("hihi", helper);
 	  //  lable.add("hihi",pane);
-	    lable.setSelectedIndex(lable.getTabCount()-1);
+	    lable.setSelectedIndex(0);
 	}
 	
 	public void run() {
@@ -74,13 +76,20 @@ public class BaseWindow extends JFrame implements Runnable {
 			}
 			if(message.getvalid()){
 				creatTable();
-				
-				
-				
+		
+			}
+			if(delemessage.isIsdele()){
+				deleTable();
 			}
 		}
 	}
 	
+	private void deleTable() {
+		// TODO Auto-generated method stub
+		
+		this.lable.remove(delemessage.getPanelname());
+	}
+
 	public void initial(){
 		try {
 			table = myhelper.getTableNames();
@@ -89,7 +98,7 @@ public class BaseWindow extends JFrame implements Runnable {
 			e.printStackTrace();
 		}
 		for(int i =0;i<table.size();i++){
-			MyPane pane = new MyPane(table.get(i),myhelper);
+			MyPane pane = new MyPane(table.get(i),myhelper,delemessage);
 			lable.add(table.get(i), pane);
 		}
 	}
@@ -134,7 +143,12 @@ public class BaseWindow extends JFrame implements Runnable {
 		
 		/***************插入创建表头**************************/
 		
+		if(checkdata()){
+			return;
+		}
+		
 		for(int i = 0;i<columns.size();i++){
+			System.out.println(columns.get(i).cname);
 			if(i==0){
 				try {
 					myhelper.insertColumn(pname, columns.get(i).cname,columns.get(i).cattribute, "id");
@@ -154,9 +168,14 @@ public class BaseWindow extends JFrame implements Runnable {
 		}
 		
 		
-		MyPane newpane = new MyPane(message.getlistName(),myhelper);
+		MyPane newpane = new MyPane(message.getlistName(),myhelper,delemessage);
 		this.lable.add(message.getlistName(),newpane);
-		
+		System.out.println(message.getlistName());
+	}
+
+	private boolean checkdata() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 	
 }

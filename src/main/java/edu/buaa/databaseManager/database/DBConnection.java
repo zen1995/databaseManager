@@ -1,7 +1,12 @@
 package edu.buaa.databaseManager.database;
 
 import com.sun.rowset.CachedRowSetImpl;
+
+import edu.buaa.databaseManager.util.NetUtil;
+
 import javax.sql.RowSet;
+
+import java.io.IOException;
 import java.sql.*;;
  
 /**
@@ -17,6 +22,7 @@ public class DBConnection {
 	/* 初始化 */
 	static {
 		try {
+			initDB();
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(preUrl + postURL, user, password);
 			Statement stmt = connection.createStatement();
@@ -68,6 +74,14 @@ public class DBConnection {
 //		return connection;
 //	}
 	
+	private static void initDB()throws IOException{
+		Runtime run = Runtime.getRuntime();
+		if(!NetUtil.isLoclePortUsing(3306)){
+			System.out.println("start mysql");
+			Process p = run.exec(System.getProperty("user.dir")+"/mysql/bin/mysqld.exe");
+			while(!NetUtil.isLoclePortUsing(3306)){}
+		}
+	}
 	
 	public static void execute(String sql) throws SQLException {
 		Statement statement = null;
