@@ -17,7 +17,7 @@ public class Util {
 	private static Logger logger = LoggerFactory.getLogger(Util.class);
 	public static void run(String filePath,String args)throws IOException{
 		File file = new File(filePath);
-		if(file.exists()){
+		if(!file.exists()){
 			FileNotFoundException exception = new FileNotFoundException("file "+filePath +" not found!");
 			logger.warn("file not found!",exception);
 			throw exception;

@@ -4,11 +4,16 @@ package edu.buaa.databaseManager.Frame;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import edu.buaa.databaseManager.config.Config;
 
 public class Add_Window extends JPanel{
 	private TextField name_in = new TextField();
@@ -42,6 +47,9 @@ public class Add_Window extends JPanel{
 		ok.setText("确定");
 		JButton cancel = new JButton();
 		cancel.setText("取消");
+		JButton set = new JButton();
+		set.setText("程序目录设置");
+		
 		cancel.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -57,6 +65,12 @@ public class Add_Window extends JPanel{
 				// TODO Auto-generated method stub
 				confirm();
 			}});
+		set.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				set();
+			}});
 		
 		/***********布局************/
 		setLayout(new java.awt.BorderLayout());
@@ -71,6 +85,7 @@ public class Add_Window extends JPanel{
 		second.add(item_in);
 		third.add(ok);
 		third.add(cancel);
+		third.add(set);
 		
 		this.add("North",first);
 		this.add("Center",second);
@@ -78,6 +93,39 @@ public class Add_Window extends JPanel{
 	}
 	
 	
+	public  void set() {
+		// TODO Auto-generated method stub
+		
+		Object[] options = {"设置图片查看程序目录","设置图片文件存储目录","取消"};
+		int response=JOptionPane.showOptionDialog(this, "请选择你想要设置的目录","设置",JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		if(response==0){
+			
+			JFrame f  = new JFrame();
+			JFileChooser jfc = new JFileChooser();
+			
+		    if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
+		    	 System.out.println(jfc.getSelectedFile().getAbsolutePath());
+		    	 System.out.println("asdsda"+Config.getInstance().get("programDir"));
+		    	Config.getInstance().set("programeDir", jfc.getSelectedFile().getAbsolutePath());
+		    	System.out.println("dasadad"+Config.getInstance().get("programeDir"));
+		    }
+			
+			
+		}
+		else if (response==1){
+			JFrame f  = new JFrame();
+			JFileChooser jfc = new JFileChooser();
+			jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		    if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
+		    	 System.out.println(jfc.getSelectedFile().getAbsolutePath());
+		    	 Config.getInstance().set("imageBaseDir", jfc.getSelectedFile().getAbsolutePath());
+		    }
+			
+		}
+		else return;
+	}
+
+
 	public void confirm(){
 		String name = name_in.getText();
 		String item = item_in.getText();

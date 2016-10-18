@@ -49,15 +49,15 @@ public class BaseWindow extends JFrame implements Runnable {
             }  
         }); 
 		setResizable(true);  
-	    setSize(Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height-100);  
+	    setSize(800,700);  
 	    
 	    add(lable);
 	    /*********************居中显示***********************/
-	  /*  int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  
+	    int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;  
         setLocation((screenWidth - 800)/2, (screenHeight-700)/2);  
 	    	
-	    */
+	    
 	    lable.add("+",add_window);
 	   
 	   // MyPane pane = new MyPane("hihi", helper);
