@@ -79,6 +79,7 @@ public class DBConnection {
 		if(!NetUtil.isLoclePortUsing(3306)){
 			System.out.println("start mysql");
 			Process p = run.exec(System.getProperty("user.dir")+"/mysql/bin/mysqld.exe");
+			while(!NetUtil.isLoclePortUsing(3306)){}
 		}
 	}
 	
