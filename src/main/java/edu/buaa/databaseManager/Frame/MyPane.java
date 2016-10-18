@@ -1,6 +1,9 @@
 package edu.buaa.databaseManager.Frame;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.LayoutManager;
 import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -50,10 +53,8 @@ public class MyPane extends JPanel{
 	public List<Pair> columnhead = new ArrayList<>();
 	JComboBox box = new JComboBox();
 	TextField textfiled = new TextField();
-	//public String[] columnnames = null ;
 	public Vector<String> columnnames = new Vector<>();
 	public Vector<Vector<Object>>columndata = new Vector<>();
-	//public Object[][] columndata = null;
 	private DefaultTableModel tableModel;
 	private JTable table;
 	public DeleMessage delet;
@@ -135,8 +136,10 @@ public class MyPane extends JPanel{
 			columndata.add(temp);
 		}
 		tableModel = new DefaultTableModel(columndata,columnnames);
+		
         table = new JTable(tableModel);
         
+        JPanel tablepane = new JPanel();
         JTableHeader tableHeader = table.getTableHeader();
         tableHeader.setReorderingAllowed(false);
         FitTableColumns(table);
@@ -146,7 +149,11 @@ public class MyPane extends JPanel{
 		
 		table.setFillsViewportHeight(true);
 		JScrollPane scrollPane = new JScrollPane(table);
-		
+		scrollPane.createHorizontalScrollBar();
+		scrollPane.createVerticalScrollBar();
+        scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER,table.getTableHeader());
+        scrollPane.setLayout(getLayout());
+		scrollPane.setSize(100, 100);
 		scrollPane.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-100, 500));
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS );
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -523,6 +530,11 @@ public class MyPane extends JPanel{
 				continue;
 			}
 			Object name = JOptionPane.showInputDialog("请输入"+columnhead.get(i).key+":");
+			if(name.equals("")){
+				JOptionPane.showMessageDialog(null, "请输入有效的文字！！！");
+				i--;
+				continue;
+			}
 			newdata.put(columnhead.get(i).key, name);
 		}
 		
@@ -541,16 +553,43 @@ public class MyPane extends JPanel{
           
         JMenuItem delMenItem = new JMenuItem();  
         delMenItem.setText("修改此行数据    ");  
+        JMenuItem insertImage = new JMenuItem();  
+        insertImage.setText("插入图片文件      ");  
+        
+        
         delMenItem.addActionListener(new java.awt.event.ActionListener() {  
             public void actionPerformed(java.awt.event.ActionEvent evt) {  
                 //该操作需要做的事 
             	dataedit();
             }  
         });  
+        
+        insertImage.addActionListener(new java.awt.event.ActionListener() {  
+            public void actionPerformed(java.awt.event.ActionEvent evt) {  
+                //该操作需要做的事 
+            	insertimage();
+            }  
+        });  
+        
         mymenu.add(delMenItem);  
+        mymenu.add(insertImage);
     }  
     
-    protected void dataedit() {
+    protected void insertimage() {
+		// TODO Auto-generated method stub
+		
+    	JFrame f  = new JFrame();
+		JFileChooser jfc = new JFileChooser();
+		jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	    if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
+	    	 System.out.println(jfc.getSelectedFile().getAbsolutePath());
+	    }
+	    
+	    
+    	
+	}
+
+	protected void dataedit() {
 		// TODO Auto-generated method stub
     	
     	int thisid = (int) table.getValueAt(table.getSelectedRow(), 0);
@@ -561,6 +600,11 @@ public class MyPane extends JPanel{
 				continue;
 			}
 			Object name = JOptionPane.showInputDialog("请输入"+columnhead.get(i).key+":");
+			if(name.equals("")){
+				JOptionPane.showMessageDialog(null, "请输入有效的文字！！！");
+				i--;
+				continue;
+			}
 			newdata.put(columnhead.get(i).key, name);
 		}
 		
@@ -594,4 +638,7 @@ public class MyPane extends JPanel{
         }  
    
     } 
+
+
+
 }

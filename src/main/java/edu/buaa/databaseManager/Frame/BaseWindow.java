@@ -143,6 +143,9 @@ public class BaseWindow extends JFrame implements Runnable {
 		
 		/***************插入创建表头**************************/
 		
+		if(checkdata()){
+			return;
+		}
 		
 		for(int i = 0;i<columns.size();i++){
 			System.out.println(columns.get(i).cname);
@@ -168,6 +171,11 @@ public class BaseWindow extends JFrame implements Runnable {
 		MyPane newpane = new MyPane(message.getlistName(),myhelper,delemessage);
 		this.lable.add(message.getlistName(),newpane);
 		System.out.println(message.getlistName());
+	}
+
+	private boolean checkdata() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 	
 }
