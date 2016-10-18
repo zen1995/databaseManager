@@ -137,7 +137,7 @@ public class MyPane extends JPanel {
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		table.setFillsViewportHeight(true);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		
 		JScrollPane scrollPane = new JScrollPane(table);
