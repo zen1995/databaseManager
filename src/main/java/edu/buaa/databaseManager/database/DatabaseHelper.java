@@ -188,7 +188,7 @@ public class DatabaseHelper {
 		}
 
 		assertHasColumn(tableName, columnName);
-		DBConnection.execute("ALTER TABLE " + tableName + " DROP " + columnName + ";");
+		DBConnection.execute("ALTER TABLE " + tableName + " DROP `" + columnName + "`;");
 	}
 
 	public static void insertRecord(String tableName, Map<String, Object> values) throws SQLException {
@@ -250,7 +250,7 @@ public class DatabaseHelper {
 			int insertColmnCount = 0;
 			for (int i = 0; i < size; i++) {
 				if (values.get(importColumns.get(i).key) != null) {
-					s += " " + importColumns.get(i).key + " ";
+					s += " `" + importColumns.get(i).key + "` ";
 					s += " ,";
 					insertColmnCount++;
 				}
@@ -310,7 +310,7 @@ public class DatabaseHelper {
 		Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<String, Object> entry = iterator.next();
-			sql += " " + entry.getKey() + "= ? ";
+			sql += " `" + entry.getKey() + "`= ? ";
 			sql += ",";
 		}
 		sql = sql.substring(0, sql.length() - 1);
@@ -345,7 +345,7 @@ public class DatabaseHelper {
 		String s = "select * from " + tableName + " where (";
 		int size = pairs.size();
 		for (int i = 0; i < size; i++) {
-			s += " " + pairs.get(i).key + " = ?";
+			s += " `" + pairs.get(i).key + "` = ?";
 			if (i != size - 1) {
 				s += " and ";
 			}
