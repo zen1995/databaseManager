@@ -80,6 +80,7 @@ public class BaseWindow extends JFrame implements Runnable {
 					creatTable();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(null, "创建表格失败！！");
 				}
 		
@@ -129,7 +130,7 @@ public class BaseWindow extends JFrame implements Runnable {
 			
 			demo.cname = name;
 			
-			String[] possibleValues = { "文字", "短数字", "长数字" }; // 用户的选择项目       
+			String[] possibleValues = { "文字","数字" }; // 用户的选择项目       
 			
 			String type =(String) JOptionPane.showInputDialog(null, "请选择这一列的数据类型","选择属性",JOptionPane.INFORMATION_MESSAGE, null, possibleValues,possibleValues[0]);
 			
@@ -166,7 +167,7 @@ public class BaseWindow extends JFrame implements Runnable {
 
 	private boolean checkdata() {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 	
 }

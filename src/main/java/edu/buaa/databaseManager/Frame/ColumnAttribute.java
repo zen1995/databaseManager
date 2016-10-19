@@ -11,9 +11,6 @@ public class ColumnAttribute {
 		if(str.equals("文字")){
 			cattribute = ColumnType.text;
 		}
-		else if (str.equals("短数字")){
-			cattribute = ColumnType.intNumber;
-		}
 		else {
 			cattribute = ColumnType.doubleNumber;
 		}

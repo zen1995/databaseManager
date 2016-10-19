@@ -1,6 +1,7 @@
 package edu.buaa.databaseManager.Frame;
 
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import java.awt.TextField;
@@ -139,11 +140,15 @@ public class MyPane extends JPanel{
 		tableModel = new DefaultTableModel(columndata,columnnames);
 		
         table = new JTable(tableModel);
-        
+       // System.out.print("sadasd"+table.getIntercellSpacing().getWidth());
+       
         JPanel tablepane = new JPanel();
         JTableHeader tableHeader = table.getTableHeader();
         tableHeader.setReorderingAllowed(false);
         FitTableColumns(table);
+       for(int i=0;i<columnhead.size();i++){
+    	   table.getColumnModel().getColumn(i).setPreferredWidth(100);
+       }
         
         /******************多选****************/
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); 
@@ -156,8 +161,9 @@ public class MyPane extends JPanel{
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS );
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		center.add(scrollPane);
-
-     
+		
+		
+		scrollPane.setViewportView(table);
         
 		/**************按钮******************/
 		JButton allselect = new JButton();
@@ -171,7 +177,7 @@ public class MyPane extends JPanel{
 		
 		allselect.setText("全选");
 		cleartable.setText("清空表格数据");
-		add.setText("插入");
+		add.setText("导入");
 		dele.setText("删除所选数据");
 		insert.setText("插入数据");
 		out.setText("导出");
@@ -186,7 +192,7 @@ public class MyPane extends JPanel{
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null, "插入失败！");
-					return;
+					e.printStackTrace();
 					
 				}
 			}});
@@ -382,7 +388,6 @@ public class MyPane extends JPanel{
 				helper.deleteTable(this.panelname);
 				delet.setIsdele(true);
 				delet.setPanelname(this);
-				JOptionPane.showMessageDialog(null, "重新启动之后生效！ ", "删除成功", JOptionPane.ERROR_MESSAGE);
 			
         } else if (n == JOptionPane.NO_OPTION) {  
            return;
@@ -506,10 +511,12 @@ public class MyPane extends JPanel{
 		             width = Math.max(width, preferedWidth);
 		         }
 		         header.setResizingColumn(column); // 此行很重要
-		         if(width<100){
-		        	 width = 100;
+		         int minwidth = 800/columnhead.size();
+		         if(width<minwidth){
+		        	 width = minwidth;
 		         }
-		         column.setWidth(width+myTable.getIntercellSpacing().width);
+		         column.setPreferredWidth(width+myTable.getIntercellSpacing().width);
+		       //  System.out.println("asdasdasd"+width+column.getHeaderValue());
 		     }
 	}
 	
@@ -543,9 +550,13 @@ public class MyPane extends JPanel{
         JMenuItem delMenItem = new JMenuItem();  
         delMenItem.setText("修改此行数据    ");  
         JMenuItem insertImage = new JMenuItem();  
-        insertImage.setText("插入图片文件      ");  
+        insertImage.setText("插入图片文件夹      ");  
         JMenuItem openimage = new JMenuItem();  
         openimage.setText("打开图片文件      ");  
+        JMenuItem insertcolumn = new JMenuItem();  
+        insertcolumn.setText("插入列      ");  
+        JMenuItem delecolumn = new JMenuItem();  
+        delecolumn.setText("删除列      ");  
         
         
         delMenItem.addActionListener(new java.awt.event.ActionListener() {  
@@ -556,6 +567,32 @@ public class MyPane extends JPanel{
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null, "修改失败！");
+					return;
+					
+				}
+            }  
+        });  
+        delecolumn.addActionListener(new java.awt.event.ActionListener() {  
+            public void actionPerformed(java.awt.event.ActionEvent evt) {  
+                //该操作需要做的事 
+            	try {
+					delecolumn();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "修改失败！");
+					return;
+					
+				}
+            }  
+        });  
+        insertcolumn.addActionListener(new java.awt.event.ActionListener() {  
+            public void actionPerformed(java.awt.event.ActionEvent evt) {  
+                //该操作需要做的事 
+            	try {
+					insertcolumn();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "插入失败！");
 					return;
 					
 				}
@@ -591,11 +628,56 @@ public class MyPane extends JPanel{
         });  
         
         mymenu.add(delMenItem);  
+        mymenu.add(insertcolumn);
+        mymenu.add(delecolumn);
         mymenu.add(insertImage);
         mymenu.add(openimage);
+       
     }  
     
-    protected void openimage() throws SQLException, IOException {
+    protected void delecolumn() throws SQLException {
+		// TODO Auto-generated method stub
+    	
+		Vector<Pair> pairs = new Vector();
+		
+	
+    	Object[] head = new Object[columnhead.size()-1];
+    	for(int i = 0;i<columnhead.size();i++){
+    		if(columnhead.get(i).key.equals("id")) continue;
+    		head[i-1]=columnhead.get(i).key;
+    	}
+    	String type =(String) JOptionPane.showInputDialog(null, "请选择删除哪一列","选择表头",JOptionPane.INFORMATION_MESSAGE, null, head,head[0]);
+    
+    	data.deleteColumn(panelname, type);
+		JOptionPane.showMessageDialog(null, "重启后生效 ", "删除成功", JOptionPane.ERROR_MESSAGE);
+
+	}
+
+	protected void insertcolumn() throws SQLException {
+		// TODO Auto-generated method stub
+    	ColumnAttribute demo  = new ColumnAttribute();
+		String name = JOptionPane.showInputDialog("请输入要插入列的内容");
+		if(name.equals("")){
+			JOptionPane.showMessageDialog(null, "请输入有效的文本 ", "错误", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		demo.cname = name;
+		
+		String[] possibleValues = { "文字","数字" }; // 用户的选择项目       
+		
+		String type =(String) JOptionPane.showInputDialog(null, "请选择这一列的数据类型","选择属性",JOptionPane.INFORMATION_MESSAGE, null, possibleValues,possibleValues[0]);
+		
+		demo.getca(type);
+		
+		data.insertColumn(panelname, demo.cname, demo.cattribute, "id");
+		
+		JOptionPane.showMessageDialog(null, "重启后生效！", "完成", JOptionPane.ERROR_MESSAGE);
+
+		
+	}
+
+	protected void openimage() throws SQLException, IOException {
 		// TODO Auto-generated method stub
 		
     	int k = table.getSelectedRow();
