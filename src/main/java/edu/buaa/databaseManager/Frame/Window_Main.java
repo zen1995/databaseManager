@@ -11,7 +11,7 @@ import edu.buaa.databaseManager.database.DatabaseHelper;
 
 	public class Window_Main {
 
-		public static void main(String[] args)  {
+		public static void main(String[] args) throws SQLException  {
 			// TODO Auto-generated method stub
 			try
 		    {

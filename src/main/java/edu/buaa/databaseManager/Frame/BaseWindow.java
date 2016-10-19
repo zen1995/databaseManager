@@ -22,22 +22,22 @@ import edu.buaa.databaseManager.database.DatabaseHelper;
 
 public class BaseWindow extends JFrame implements Runnable {
 	
-//	JFrame frame = new JFrame();
+
 	JTabbedPane lable = new JTabbedPane();
 	public Message message = new Message();
 	public DeleMessage delemessage = new DeleMessage();
 	Add_Window add_window = new Add_Window(message);
 	private DatabaseHelper myhelper = null ;
 	List<String> table = new ArrayList<>();
-	//JButton addpane = new JButton();
+
 	
-	public BaseWindow(DatabaseHelper helper){
+	public BaseWindow(DatabaseHelper helper) throws SQLException{
 		
 		myhelper = helper;
 		
 		initial();
 		
-		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+		
 		getContentPane().setLayout(new java.awt.BorderLayout());  
 	
 		addWindowListener(new WindowAdapter() {  
@@ -60,22 +60,28 @@ public class BaseWindow extends JFrame implements Runnable {
 	    
 	    lable.add("+",add_window);
 	   
-	   // MyPane pane = new MyPane("hihi", helper);
-	  //  lable.add("hihi",pane);
+
 	    lable.setSelectedIndex(0);
 	}
 	
 	public void run() {
 		// TODO Auto-generated method stub
 		while(true){
+			
 			try {
 				java.lang.Thread.sleep(3);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			if(message.getvalid()){
-				creatTable();
+				try {
+					creatTable();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "创建表格失败！！");
+				}
 		
 			}
 			if(delemessage.isIsdele()){
@@ -90,39 +96,31 @@ public class BaseWindow extends JFrame implements Runnable {
 		this.lable.remove(delemessage.getPanelname());
 	}
 
-	public void initial(){
-		try {
+	public void initial() throws SQLException{
+		
 			table = myhelper.getTableNames();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		for(int i =0;i<table.size();i++){
 			MyPane pane = new MyPane(table.get(i),myhelper,delemessage);
 			lable.add(table.get(i), pane);
 		}
 	}
 	
-	public void creatTable(){
+	public void creatTable() throws SQLException{
 		
 		ArrayList<ColumnAttribute> columns = new ArrayList<>();
 		
 		message.setvalid(false);
 		String pname = message.getlistName();
 		
-		try {
-			myhelper.createTable(message.getlistName());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+		myhelper.createTable(message.getlistName());
+		
 		
 		for(int i =0 ;i<message.getNum();i++){
 			
 			ColumnAttribute demo  = new ColumnAttribute();
 			String name = JOptionPane.showInputDialog("请输入第"+(i+1)+"列的内容");
-			
-		//	System.out.println(name);
 			if(name.equals("")){
 				JOptionPane.showMessageDialog(null, "请输入有效的文本 ", "错误", JOptionPane.ERROR_MESSAGE);
 				i--;
@@ -134,7 +132,6 @@ public class BaseWindow extends JFrame implements Runnable {
 			String[] possibleValues = { "文字", "短数字", "长数字" }; // 用户的选择项目       
 			
 			String type =(String) JOptionPane.showInputDialog(null, "请选择这一列的数据类型","选择属性",JOptionPane.INFORMATION_MESSAGE, null, possibleValues,possibleValues[0]);
-//			System.out.println(type);
 			
 			demo.getca(type);
 			
@@ -150,27 +147,21 @@ public class BaseWindow extends JFrame implements Runnable {
 		for(int i = 0;i<columns.size();i++){
 			System.out.println(columns.get(i).cname);
 			if(i==0){
-				try {
+				
 					myhelper.insertColumn(pname, columns.get(i).cname,columns.get(i).cattribute, "id");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
 			}
 			else{
-				try {
+				
 					myhelper.insertColumn(pname, columns.get(i).cname,columns.get(i).cattribute,columns.get((i-1)).cname);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
 			}
 		}
 		
 		
 		MyPane newpane = new MyPane(message.getlistName(),myhelper,delemessage);
 		this.lable.add(message.getlistName(),newpane);
-		System.out.println(message.getlistName());
+		
 	}
 
 	private boolean checkdata() {

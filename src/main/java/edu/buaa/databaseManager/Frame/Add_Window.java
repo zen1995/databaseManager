@@ -104,10 +104,9 @@ public class Add_Window extends JPanel{
 			JFileChooser jfc = new JFileChooser();
 			
 		    if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
-		    	 System.out.println(jfc.getSelectedFile().getAbsolutePath());
-		    	 System.out.println("asdsda"+Config.getInstance().get("programDir"));
+		    	
 		    	Config.getInstance().set("programeDir", jfc.getSelectedFile().getAbsolutePath());
-		    	System.out.println("dasadad"+Config.getInstance().get("programeDir"));
+		    	
 		    }
 			
 			
@@ -117,7 +116,7 @@ public class Add_Window extends JPanel{
 			JFileChooser jfc = new JFileChooser();
 			jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		    if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
-		    	 System.out.println(jfc.getSelectedFile().getAbsolutePath());
+		    	
 		    	 Config.getInstance().set("imageBaseDir", jfc.getSelectedFile().getAbsolutePath());
 		    }
 			
@@ -132,15 +131,14 @@ public class Add_Window extends JPanel{
 		
 		
 		
-		//System.out.println(name.equals(""));
-		//System.out.println(item.equals(""));
+		
 		if((!name.equals(""))&&(!item.equals(""))){
 			name_in.setText("");
 			item_in.setText("");
 			
 			columnnum = Integer.parseInt(item);
 			
-		//	System.out.println("adsssssssssssss"+columnnum);
+		
 			
 			if((columnnum>0)){
 				
