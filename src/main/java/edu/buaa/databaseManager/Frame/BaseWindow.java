@@ -122,18 +122,27 @@ public class BaseWindow extends JFrame implements Runnable {
 			
 			ColumnAttribute demo  = new ColumnAttribute();
 			String name = JOptionPane.showInputDialog("请输入第"+(i+1)+"列的内容");
+			if(name==null){
+				return;
+			}
 			if(name.equals("")){
 				JOptionPane.showMessageDialog(null, "请输入有效的文本 ", "错误", JOptionPane.ERROR_MESSAGE);
 				i--;
 				continue;
 			}
-			
+			name = name.replaceAll("\\s*", "");
 			demo.cname = name;
+			
 			
 			String[] possibleValues = { "文字","数字" }; // 用户的选择项目       
 			
 			String type =(String) JOptionPane.showInputDialog(null, "请选择这一列的数据类型","选择属性",JOptionPane.INFORMATION_MESSAGE, null, possibleValues,possibleValues[0]);
-			
+			if(type==null){
+				return;
+			}
+			if(type==null){
+				return;
+			}
 			demo.getca(type);
 			
 			columns.add(demo);

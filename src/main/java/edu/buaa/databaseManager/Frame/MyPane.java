@@ -173,8 +173,11 @@ public class MyPane extends JPanel{
 		JButton alldele = new JButton();
 		JButton cleartable = new JButton();
 		JButton insert = new JButton();
+		JButton insertcolumn = new JButton();
+		JButton delecolumn  = new JButton();
 		
-		
+		insertcolumn.setText("插入列");
+		delecolumn.setText("删除列");
 		allselect.setText("全选");
 		cleartable.setText("清空表格数据");
 		add.setText("导入");
@@ -189,6 +192,32 @@ public class MyPane extends JPanel{
 				// TODO Auto-generated method stub
 				try {
 					insert();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "插入失败！");
+					e.printStackTrace();
+					
+				}
+			}});
+		delecolumn.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				try {
+					delecolumn();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "插入失败！");
+					e.printStackTrace();
+					
+				}
+			}});
+		insertcolumn.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				try {
+					insertcolumn();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null, "插入失败！");
@@ -291,6 +320,8 @@ public class MyPane extends JPanel{
 
 		south.add(insert);
 		south.add(dele);
+		south.add(insertcolumn);
+		south.add(delecolumn);
 		south.add(add);
 		south.add(out);
 	
@@ -366,12 +397,11 @@ public class MyPane extends JPanel{
 	public void dele() throws SQLException{
 		
 		int select[] = table.getSelectedRows();
-		table.getValueAt(select[0], 0);
+		//table.getValueAt(select[0], 0);
 		List<Integer> id = new ArrayList<>();;
+		
 		for(int i = 0;i<select.length;i++){
 			id.add((Integer) table.getValueAt(select[i], 0));
-		
-			
 		}
 		
 		data.deleteRecord(panelname,id);
@@ -515,7 +545,7 @@ public class MyPane extends JPanel{
 		         if(width<minwidth){
 		        	 width = minwidth;
 		         }
-		         column.setPreferredWidth(width+myTable.getIntercellSpacing().width);
+		         column.setPreferredWidth(width+myTable.getIntercellSpacing().width+1);
 		       //  System.out.println("asdasdasd"+width+column.getHeaderValue());
 		     }
 	}
@@ -529,6 +559,9 @@ public class MyPane extends JPanel{
 				continue;
 			}
 			Object name = JOptionPane.showInputDialog("请输入"+columnhead.get(i).key+":");
+			if(name==null){
+				return;
+			}
 			if(name.equals("")){
 				JOptionPane.showMessageDialog(null, "请输入有效的文字！！！");
 				i--;
@@ -647,7 +680,9 @@ public class MyPane extends JPanel{
     		head[i-1]=columnhead.get(i).key;
     	}
     	String type =(String) JOptionPane.showInputDialog(null, "请选择删除哪一列","选择表头",JOptionPane.INFORMATION_MESSAGE, null, head,head[0]);
-    
+    	if(type==null){
+			return;
+		}
     	data.deleteColumn(panelname, type);
 		JOptionPane.showMessageDialog(null, "重启后生效 ", "删除成功", JOptionPane.ERROR_MESSAGE);
 
@@ -657,17 +692,23 @@ public class MyPane extends JPanel{
 		// TODO Auto-generated method stub
     	ColumnAttribute demo  = new ColumnAttribute();
 		String name = JOptionPane.showInputDialog("请输入要插入列的内容");
+		if(name==null){
+			return;
+		}
 		if(name.equals("")){
-			JOptionPane.showMessageDialog(null, "请输入有效的文本 ", "错误", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "请输入有效的文本 ", "错误", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 		
+		name = name.replaceAll("\\s*", "");
 		demo.cname = name;
 		
 		String[] possibleValues = { "文字","数字" }; // 用户的选择项目       
 		
 		String type =(String) JOptionPane.showInputDialog(null, "请选择这一列的数据类型","选择属性",JOptionPane.INFORMATION_MESSAGE, null, possibleValues,possibleValues[0]);
-		
+		if(type==null){
+			return;
+		}
 		demo.getca(type);
 		
 		data.insertColumn(panelname, demo.cname, demo.cattribute, "id");
@@ -700,15 +741,19 @@ public class MyPane extends JPanel{
     	}
     	String type =(String) JOptionPane.showInputDialog(null, "请选择查看哪一列插入图片","选择表头",JOptionPane.INFORMATION_MESSAGE, null, head,head[0]);
     	
+    	if(type==null){
+			return;
+		}
     	Object path  = attribute.get(0).get(type);
     	
     	File file=new File((String)path);    
 
 
-    	if (!new File(Config.getInstance().get("programeDir")).exists()){
+    	if ((!new File(Config.getInstance().get("programeDir")).exists())||(!Config.getInstance().get("programeDir").endsWith(".exe"))){
     		Add_Window get = new Add_Window(null);
     		get.set();
     	}
+    	
     	else{
     		Util util = new Util();
         	
@@ -746,6 +791,9 @@ public class MyPane extends JPanel{
 		
 		String type =(String) JOptionPane.showInputDialog(null, "请选择在哪一列插入图片","选择表头",JOptionPane.INFORMATION_MESSAGE, null, head,head[0]);
     	
+		if(type==null){
+			return;
+		}
 		JFileChooser jfc = new JFileChooser();
 		jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	    if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
@@ -771,6 +819,9 @@ public class MyPane extends JPanel{
 				continue;
 			}
 			Object name = JOptionPane.showInputDialog("请输入"+columnhead.get(i).key+":");
+			if(name==null){
+				return;
+			}
 			if(name.equals("")){
 				JOptionPane.showMessageDialog(null, "请输入有效的文字！！！");
 				i--;

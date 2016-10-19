@@ -1,11 +1,15 @@
 package edu.buaa.databaseManager.Frame;
 
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,7 +30,8 @@ public class Add_Window extends JPanel{
 		this.message = messages;
 		/**************说明***********/
 		JLabel readme =new JLabel();
-		readme.setText("说明");
+		readme.setText("添加数据表格");
+		
 		
 		
 		/**********文本*****************/
@@ -48,7 +53,10 @@ public class Add_Window extends JPanel{
 		JButton cancel = new JButton();
 		cancel.setText("取消");
 		JButton set = new JButton();
-		set.setText("程序目录设置");
+		set.setText("设置");
+		
+	
+	
 		
 		cancel.addActionListener(new ActionListener() {
 
@@ -77,12 +85,18 @@ public class Add_Window extends JPanel{
 		JPanel first = new JPanel();
 		JPanel second = new JPanel();
 		JPanel third = new JPanel();
+
+		first.setLayout(new GridBagLayout());
 		
 		first.add(readme);
+		
+	
+		
 		second.add(name);
 		second.add(name_in);
 		second.add(item);
 		second.add(item_in);
+		
 		third.add(ok);
 		third.add(cancel);
 		third.add(set);
@@ -96,7 +110,7 @@ public class Add_Window extends JPanel{
 	public  void set() {
 		// TODO Auto-generated method stub
 		
-		Object[] options = {"设置图片查看程序目录","设置图片文件存储目录","取消"};
+		Object[] options = {"设置图片查看程序目录","取消"};
 		int response=JOptionPane.showOptionDialog(this, "请选择你想要设置的目录","设置",JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 		if(response==0){
 			
@@ -111,7 +125,7 @@ public class Add_Window extends JPanel{
 			
 			
 		}
-		else if (response==1){
+	/*	else if (response==1){
 			JFrame f  = new JFrame();
 			JFileChooser jfc = new JFileChooser();
 			jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -120,7 +134,7 @@ public class Add_Window extends JPanel{
 		    	 Config.getInstance().set("imageBaseDir", jfc.getSelectedFile().getAbsolutePath());
 		    }
 			
-		}
+		}*/
 		else return;
 	}
 
@@ -157,5 +171,6 @@ public class Add_Window extends JPanel{
 			JOptionPane.showMessageDialog(null, "请输入完整信息");
 		}
 	}
+
 	
 }
