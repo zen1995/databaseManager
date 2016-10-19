@@ -77,7 +77,6 @@ public class TestExcel {
 		ExcelReader reader = excelFile.reader();
 		assertEquals(0,DatabaseHelper.search(testTableName).getData().size());
 		DatabaseResult result = reader.read();
-		System.out.println(result);
 		DatabaseHelper.insertRecord(testTableName,result);
 		assertEquals(1,DatabaseHelper.search(testTableName).getData().size());
 	}

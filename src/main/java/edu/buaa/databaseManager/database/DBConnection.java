@@ -6,6 +6,9 @@ import edu.buaa.databaseManager.util.NetUtil;
 
 import javax.sql.RowSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.sql.*;;
  
@@ -19,12 +22,17 @@ public class DBConnection {
 	static private final String user = "root";
 	static private final String password = "123456";
 	public static  final String databaseName = "hospital";
+	private static Logger logger = LoggerFactory.getLogger(DBConnection.class);
 	/* 初始化 */
 	static {
 		try {
 			initDB();
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(preUrl + postURL, user, password);
+			Connection connection = null;
+			do{
+				connection = DriverManager.getConnection(preUrl + postURL, user, password);
+				System.out.println("try connect");
+			}while(connection == null);
 			Statement stmt = connection.createStatement();
 			String sql = "create database if not exists " + databaseName
 					+ " CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';";
@@ -32,8 +40,7 @@ public class DBConnection {
 			stmt.close();
 			connection.close();
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("error when load jdbc driver: " + e.getMessage());
+			logger.error("unable to connection database!",e);
 		}
 	}
 
@@ -55,6 +62,7 @@ public class DBConnection {
 			// stmt = connection.createStatement();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			logger.error("unable to connecte DB",e);
 			throw e;
 		}
 		return connection;

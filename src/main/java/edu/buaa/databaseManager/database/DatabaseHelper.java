@@ -191,27 +191,28 @@ public class DatabaseHelper {
 		Connection connection = DBConnection.getConnection();
 		Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
 		String s = "insert into " + tableName + "  (";
-		
+
 		int size = values.size();
 		int i = 0;
 		while (iterator.hasNext()) {
 			Entry<String, Object> entry = iterator.next();
-			s += " " + entry.getKey() + " ";
-			if (i != size - 1) {
-				s += " , ";
-			}
+			s += " `" + entry.getKey() + "` ";
+			s += " ,";
 			i++;
 		}
+		s = s.substring(0, s.length()-1);
 		s += " )";
 
 		s += " values (";
 		for (i = 0; i < size; i++) {
 			s += " ? ";
-			if (i != size - 1) {
-				s += " , ";
-			}
+			s += " ,";
+
 		}
+		s = s.substring(0, s.length()-1);
+
 		s += ")";
+		System.out.println(s);
 		PreparedStatement statement = connection.prepareStatement(s);
 		iterator = values.entrySet().iterator();
 		i = 0;
@@ -227,7 +228,6 @@ public class DatabaseHelper {
 	}
 
 	public static void insertRecord(String tableName, DatabaseResult result) throws SQLException {
-		System.err.println(result);
 		Connection connection = DBConnection.getConnection();
 		List<Map<String, Object>> data = result.getData();
 		List<Pair> tableColumns = getColumns(tableName);
@@ -237,15 +237,15 @@ public class DatabaseHelper {
 		importColumns.removeAll(dataColumns);
 		int size = importColumns.size();
 		// System.out.println(importColumns);
-
+		SQLException exception = null;
 		for (Map<String, Object> values : data) {
 
 			Iterator<Entry<String, Object>> iterator = values.entrySet().iterator();
 			String s = "insert into " + tableName + "  (";
 			int insertColmnCount = 0;
 			for (int i = 0; i < size; i++) {
-				if(values.get(importColumns.get(i)) != null){
-					s += " " + importColumns.get(i).key+" ";
+				if (values.get(importColumns.get(i).key) != null) {
+					s += " " + importColumns.get(i).key + " ";
 					s += " ,";
 					insertColmnCount++;
 				}
@@ -256,31 +256,34 @@ public class DatabaseHelper {
 			s += " values (";
 			for (int i = 0; i < insertColmnCount; i++) {
 				s += " ? ";
-				if (i != size - 1) {
-					s += " , ";
-				}
+				s += " ,";
+
 			}
+			s = s.substring(0, s.length() - 1);
 			s += ")";
-			// System.out.println(s);
 			PreparedStatement statement = connection.prepareStatement(s);
 			iterator = values.entrySet().iterator();
-			for (int i = 0; i < size;) {
-				if(values.get(i) != null){
-					String key = importColumns.get(i).key;
-					statement.setObject(i + 1, values.get(key));
-					i++;
+			for (int i = 0, j = 0; i < size; i++) {
+				String key = importColumns.get(i).key;
+				if (values.get(key) != null) {
+					statement.setObject(j + 1, values.get(key));
+					j++;
 				}
 			}
 			try {
 				statement.executeUpdate();
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (SQLException e) {
+				logger.warn("unable to insert record!", e);
+				if (exception == null)
+					exception = e;
 			}
 
 			statement.close();
 		}
-
 		connection.close();
+
+		if (exception != null)
+			throw exception;
 	}
 
 	public static void deleteRecord(String tableName, List<Integer> idList) throws SQLException {

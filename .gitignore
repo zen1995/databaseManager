@@ -53,4 +53,4 @@ Temporary Items
 /mysql/
 /logs/
 /SYNGO_FV/
-src/main/java/edu/buaa/databaseManager/Frame/BaseWindow.java
+*.properties

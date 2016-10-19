@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Config {
-	private static final String filePath = System.getProperty("user.dir") + "/config.properties";
+	private static final String filePath = System.getProperty("user.dir") + "/resource/config.properties";
 	private Properties properties;
 	private static Config instance = null;
 	private static Logger logger = LoggerFactory.getLogger(Config.class);
@@ -57,11 +57,17 @@ public class Config {
 			try {
 				instance = new Config();
 			} catch (Exception e) {
+				logger.error("unable to initialize config!",e);
 				e.printStackTrace();
 			}
 			
 		}
 		return instance;
 	}
-
+	
+	public static void main(String[] args) {
+		Config config = Config.getInstance();
+		//config.set("test","a");
+		System.out.println(config.get("test"));
+	}
 }
