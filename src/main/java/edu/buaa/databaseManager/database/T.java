@@ -25,25 +25,10 @@ public class T {
 //		for(int i=0;i < Math.pow(10, 4);i++){
 //			logger.warn(String.valueOf(i));
 //		}
-		
-//		InputStream in = new FileInputStream("t1.properties");		
-//		Properties p = new Properties();
-//		p.setProperty("b","bbb");
-//		p.load(in);
-//		in.close();
-//		String s = p.getProperty("a");
-//		System.out.println(s);
-//		p.setProperty("a", "sss");
-//		
-//		
-//		FileOutputStream outputFile = new FileOutputStream("t1.properties");
-//		p.store(outputFile,"sdsd");
-//		outputFile.close();
-		
-		ExcelFile excelFile = new ExcelFile("E:\\study\\lab\\hospital\\databaseManager\\新建 Microsoft Excel 工作表.xlsx", 'r');
-		ExcelReader reader = excelFile.reader();
+		ExcelReader reader = new ExcelFile("1.xls",'r').reader();
 		DatabaseResult result = reader.read();
 		System.out.println(result);
+		
 	}
 
 }

@@ -47,8 +47,8 @@ Temporary Items
 .apdisk
 
 /.settings/
-*.xls
-*.xlsx
+#*.xls
+#*.xlsx
 /target/
 /mysql/
 /logs/

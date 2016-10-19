@@ -14,7 +14,9 @@ import org.junit.Test;
 import edu.buaa.databaseManager.database.ColumnType;
 import edu.buaa.databaseManager.database.DBConnection;
 import edu.buaa.databaseManager.database.DatabaseHelper;
+import edu.buaa.databaseManager.database.DatabaseResult;
 import edu.buaa.databaseManager.database.Pair;
+import edu.buaa.databaseManager.excel.ExcelFile;
 import junit.framework.TestCase;
 
 public class TestDatabase extends TestCase {
@@ -159,5 +161,23 @@ public class TestDatabase extends TestCase {
 		DatabaseHelper.editRecord(testTableName,1,map);
 		data = DatabaseHelper.search(testTableName).getData();
 		assertEquals("female",data.get(0).get("sex"));
+	}
+	
+	@Test
+	public void test()throws Exception{
+		DatabaseResult result = new ExcelFile("test/CMR.xlsx",'r').reader().read();
+		
+		String tableName = "tests";
+		if(DatabaseHelper.hasTable(tableName)){
+			DatabaseHelper.deleteTable(tableName);
+		}
+		DatabaseHelper.createTable(tableName);
+		DatabaseHelper.insertColumn(tableName,"病人ID",ColumnType.doubleNumber,"id");
+		DatabaseHelper.insertColumn(tableName,"姓名", ColumnType.text,"病人ID");
+		DatabaseHelper.insertColumn(tableName,"性别",ColumnType.text, "姓名");
+		DatabaseHelper.insertColumn(tableName,"体重",ColumnType.doubleNumber, "性别");
+		DatabaseHelper.insertRecord(tableName,result);
+		System.out.println(DatabaseHelper.search(tableName).getData().size());
+		DatabaseHelper.deleteTable(tableName);
 	}
 }

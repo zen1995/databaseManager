@@ -150,7 +150,7 @@ public class DatabaseHelper {
 
 	private static void assertHasColumn(String tableName, String columnName) throws SQLException {
 		if (!hasColumn(tableName, columnName)) {
-			SQLException exception = new SQLException("column not found!" + tableName);
+			SQLException exception = new SQLException("column not found!" + tableName+"-"+tableName);
 			throw exception;
 		}
 	}
