@@ -165,14 +165,19 @@ public class DatabaseHelper {
 		return false;
 	}
 
-	public static boolean insertColumn(String tableName, String columnName, ColumnType type, String afterColumn)
+	public static void insertColumn(String tableName, String columnName, ColumnType type, String afterColumn)
 			throws SQLException {
 		assertHasTable(tableName);
 		assertHasColumn(tableName, afterColumn);
 
-		DBConnection.execute("ALTER TABLE `" + tableName + "` ADD `" + columnName + "` " + type.getTypeString()
-				+ " AFTER `" + afterColumn + "`; ");
-		return false;
+		if(type.equals(ColumnType.intNumber)){
+			DBConnection.execute("ALTER TABLE `" + tableName + "` ADD `" + columnName + "` " + type.getTypeString()
+			+ " DEFAULT 0 " + " AFTER `" + afterColumn + "`; ");
+		}
+		else DBConnection.execute("ALTER TABLE `" + tableName + "` ADD `" + columnName + "` " + type.getTypeString()
+				+ " NULL DEFAULT NULL " + " AFTER `" + afterColumn + "`; ");
+		
+		return;
 
 	}
 
@@ -200,7 +205,7 @@ public class DatabaseHelper {
 			s += " ,";
 			i++;
 		}
-		s = s.substring(0, s.length()-1);
+		s = s.substring(0, s.length() - 1);
 		s += " )";
 
 		s += " values (";
@@ -209,10 +214,10 @@ public class DatabaseHelper {
 			s += " ,";
 
 		}
-		s = s.substring(0, s.length()-1);
+		s = s.substring(0, s.length() - 1);
 
 		s += ")";
-		System.out.println(s);
+		// System.out.println(s);
 		PreparedStatement statement = connection.prepareStatement(s);
 		iterator = values.entrySet().iterator();
 		i = 0;
