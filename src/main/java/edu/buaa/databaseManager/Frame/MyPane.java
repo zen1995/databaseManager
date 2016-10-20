@@ -207,7 +207,7 @@ public class MyPane extends JPanel{
 					delecolumn();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					JOptionPane.showMessageDialog(null, "插入失败！");
+					JOptionPane.showMessageDialog(null, "删除失败！");
 					e.printStackTrace();
 					
 				}
@@ -612,7 +612,7 @@ public class MyPane extends JPanel{
 					delecolumn();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					JOptionPane.showMessageDialog(null, "修改失败！");
+					JOptionPane.showMessageDialog(null, "删除失败！");
 					return;
 					
 				}
@@ -654,6 +654,7 @@ public class MyPane extends JPanel{
 					insertimage();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(null, "插入图片失败！");
 					return;
 				}
@@ -661,8 +662,8 @@ public class MyPane extends JPanel{
         });  
         
         mymenu.add(delMenItem);  
-        mymenu.add(insertcolumn);
-        mymenu.add(delecolumn);
+      //  mymenu.add(insertcolumn);
+      //  mymenu.add(delecolumn);
         mymenu.add(insertImage);
         mymenu.add(openimage);
        
@@ -749,7 +750,7 @@ public class MyPane extends JPanel{
     	File file=new File((String)path);    
 
 
-    	if ((!new File(Config.getInstance().get("programeDir")).exists())||(!Config.getInstance().get("programeDir").endsWith(".exe"))){
+    	if ((!new File(Config.getInstance().get("programeDir")).exists())){
     		Add_Window get = new Add_Window(null);
     		get.set();
     	}
@@ -799,7 +800,7 @@ public class MyPane extends JPanel{
 	    if(jfc.showOpenDialog(f)==JFileChooser.APPROVE_OPTION ){
 	    	
 	    	 attribute.get(0).put(type,jfc.getSelectedFile().getAbsolutePath());
-	    	 
+	    	// System.out.println(type+"asdad"+jfc.getSelectedFile().getAbsolutePath());
 			data.editRecord(panelname, (int)id, attribute.get(0));
 			
 	    }
@@ -813,23 +814,36 @@ public class MyPane extends JPanel{
     	
     	int thisid = (int) table.getValueAt(table.getSelectedRow(), 0);
     	Map<String,Object> newdata = new HashMap();
-		for(int i =0;i<columnhead.size();i++){
-			
-			if(columnhead.get(i).key.equals("id")){
-				continue;
-			}
-			Object name = JOptionPane.showInputDialog("请输入"+columnhead.get(i).key+":");
-			if(name==null){
-				return;
-			}
-			if(name.equals("")){
-				JOptionPane.showMessageDialog(null, "请输入有效的文字！！！");
-				i--;
-				continue;
-			}
-			newdata.put(columnhead.get(i).key, name);
+    	
+    	
+    	Object[] head = new Object[columnhead.size()-1];
+    	for(int i = 0;i<columnhead.size();i++){
+    		if(columnhead.get(i).key.equals("id")) continue;
+    		head[i-1]=columnhead.get(i).key;
+    	}
+    	String type =(String) JOptionPane.showInputDialog(null, "请选择修改哪一列的数据","选择表头",JOptionPane.INFORMATION_MESSAGE, null, head,head[0]);
+    	
+		if(type==null){
+			return;
 		}
 		
+		String name = JOptionPane.showInputDialog("请输入内容");
+		if(name==null){
+			return;
+		}
+    	
+		DatabaseResult datas = new DatabaseResult();
+		Pair pair = new Pair("id",thisid);
+		Vector<Pair> pairs = new Vector<Pair>();
+		pairs.add(pair);
+		datas = data.search(panelname, pairs);
+		List<Map<String, Object>> attribute = new ArrayList();
+		
+		attribute = datas.getData();
+		
+		
+		newdata = attribute.get(0);
+		newdata.put(type, name);
 		
 		data.editRecord(panelname, thisid, newdata);
 		

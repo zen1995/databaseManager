@@ -111,7 +111,7 @@ public class Add_Window extends JPanel{
 		// TODO Auto-generated method stub
 		
 		Object[] options = {"设置图片查看程序目录","取消"};
-		int response=JOptionPane.showOptionDialog(this, "请选择你想要设置的目录","设置",JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		int response=JOptionPane.showOptionDialog(this, "当前目录为"+"  "+Config.getInstance().get("programeDir"),"设置",JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 		if(response==0){
 			
 			JFrame f  = new JFrame();
