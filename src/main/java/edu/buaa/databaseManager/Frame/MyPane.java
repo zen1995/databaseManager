@@ -164,6 +164,10 @@ public class MyPane extends JPanel{
 		
 		
 		scrollPane.setViewportView(table);
+		
+		/**************右键菜单******************/
+		createPopupMenu();
+		
         
 		/**************按钮******************/
 		JButton allselect = new JButton();
@@ -413,7 +417,8 @@ public class MyPane extends JPanel{
 	
 	public void alldele(DatabaseHelper helper) throws SQLException{
 	    int n = JOptionPane.showConfirmDialog(null, "确认将数据库全部删除吗?删除后数据将无法恢复！！", "确认删除框", JOptionPane.YES_NO_OPTION);  
-        if (n == JOptionPane.YES_OPTION) {  
+    
+	    if (n == JOptionPane.YES_OPTION) {  
            
 				helper.deleteTable(this.panelname);
 				delet.setIsdele(true);
@@ -429,7 +434,7 @@ public class MyPane extends JPanel{
 		
 		columnhead = data.getColumns(this.panelname);
 		
-		createPopupMenu();
+		
 		
 		
 	}
@@ -562,11 +567,6 @@ public class MyPane extends JPanel{
 			if(name==null){
 				return;
 			}
-			if(name.equals("")){
-				JOptionPane.showMessageDialog(null, "请输入有效的文字！！！");
-				i--;
-				continue;
-			}
 			newdata.put(columnhead.get(i).key, name);
 		}
 		
@@ -684,10 +684,31 @@ public class MyPane extends JPanel{
     	if(type==null){
 			return;
 		}
+    	TableColumn tc = new TableColumn();
+	
+		for(int i = 0;i<columnhead.size();i++){
+			if(columnhead.get(i).key.equals(type)){
+				tc = table.getColumnModel().getColumn(i);
+				System.out.println(i+"ceshi "+ tc);
+				break;
+			}
+		}
     	data.deleteColumn(panelname, type);
-		JOptionPane.showMessageDialog(null, "重启后生效 ", "删除成功", JOptionPane.ERROR_MESSAGE);
+		//JOptionPane.showMessageDialog(null, "重启后生效 ", "删除成功", JOptionPane.ERROR_MESSAGE);
+		
 
-	}
+		/*************************xiu'zheng********************************/
+		
+		
+		//refresh();
+		
+	
+		initial();
+		table.getColumnModel().removeColumn(tc);
+		table.repaint();
+		
+    
+    }
 
 	protected void insertcolumn() throws SQLException {
 		// TODO Auto-generated method stub
@@ -712,10 +733,18 @@ public class MyPane extends JPanel{
 		}
 		demo.getca(type);
 		
-		data.insertColumn(panelname, demo.cname, demo.cattribute, "id");
+		data.insertColumn(panelname, demo.cname, demo.cattribute, columnhead.get(columnhead.size()-1).key);
 		
-		JOptionPane.showMessageDialog(null, "重启后生效！", "完成", JOptionPane.ERROR_MESSAGE);
+		//JOptionPane.showMessageDialog(null, "重启后生效！", "完成", JOptionPane.ERROR_MESSAGE);
 
+		
+		/*************************xiu'zheng********************************/
+		initial();
+		refresh();
+		tableModel.addColumn(name);
+		table.repaint();
+		
+		
 		
 	}
 

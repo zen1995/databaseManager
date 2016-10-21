@@ -1,6 +1,7 @@
 package edu.buaa.databaseManager.Frame;
 
 
+import java.awt.Label;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -115,7 +116,7 @@ public class BaseWindow extends JFrame implements Runnable {
 		String pname = message.getlistName();
 		
 	
-		myhelper.createTable(message.getlistName());
+		
 		
 		
 		for(int i =0 ;i<message.getNum();i++){
@@ -147,7 +148,7 @@ public class BaseWindow extends JFrame implements Runnable {
 			
 			columns.add(demo);
 		}
-		
+		myhelper.createTable(message.getlistName());
 		/***************插入创建表头**************************/
 		
 		if(checkdata()){
@@ -171,6 +172,8 @@ public class BaseWindow extends JFrame implements Runnable {
 		
 		MyPane newpane = new MyPane(message.getlistName(),myhelper,delemessage);
 		this.lable.add(message.getlistName(),newpane);
+		lable.remove(lable.getComponentCount()-2);
+		lable.add("+",add_window);
 		
 	}
 
