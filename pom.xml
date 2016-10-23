@@ -60,16 +60,9 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-					<archive>
-						<manifest>
-							<mainClass>edu.buaa.databaseManager.Frame.SplashProcess</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<compilerArguments>
-								<extdirs>project-demo\lib</extdirs>
-							</compilerArguments>
-						</manifest>
-					</archive>
+										<descriptorRefs>  
+                <descriptorRef>jar-with-dependencies</descriptorRef>  
+            </descriptorRefs>
 				</configuration>
 
 			</plugin>
@@ -84,8 +77,29 @@
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>
 					</archive>
+
 				</configuration>
 			</plugin>
+			
+			<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+                <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                <overWriteReleases>false</overWriteReleases>
+                <overWriteSnapshots>false</overWriteSnapshots>
+                <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
 		</plugins>
 	</build>
 
