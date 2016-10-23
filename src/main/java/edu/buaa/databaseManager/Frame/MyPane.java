@@ -689,14 +689,17 @@ public class MyPane extends JPanel{
 		for(int i = 0;i<columnhead.size();i++){
 			if(columnhead.get(i).key.equals(type)){
 				tc = table.getColumnModel().getColumn(i);
-				System.out.println(i+"ceshi "+ tc);
+				box.removeItemAt(i-1);
+			//	System.out.println(i+"ceshi "+ tc);
 				break;
 			}
 		}
+		//System.out.println("1"+columnhead.size());
     	data.deleteColumn(panelname, type);
 		//JOptionPane.showMessageDialog(null, "重启后生效 ", "删除成功", JOptionPane.ERROR_MESSAGE);
 		
-
+    	
+    	
 		/*************************xiu'zheng********************************/
 		
 		
@@ -704,6 +707,7 @@ public class MyPane extends JPanel{
 		
 	
 		initial();
+	//	System.out.println("2"+columnhead.size());
 		table.getColumnModel().removeColumn(tc);
 		table.repaint();
 		
@@ -741,6 +745,7 @@ public class MyPane extends JPanel{
 		/*************************xiu'zheng********************************/
 		initial();
 		refresh();
+		box.addItem(name);
 		tableModel.addColumn(name);
 		table.repaint();
 		
