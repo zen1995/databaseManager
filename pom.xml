@@ -45,11 +45,7 @@
 			<version>2.6</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.jb2011.lnf.beautyeye</groupId>
-			<artifactId>beautyeye</artifactId>
-			<version>1.0</version>
-		</dependency>
+		
 	</dependencies>
  
 	<build>

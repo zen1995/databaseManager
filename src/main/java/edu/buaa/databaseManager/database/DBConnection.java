@@ -26,6 +26,7 @@ public class DBConnection {
 	/* 初始化 */
 	static {
 		try {
+			//java.lang.Thread.sleep(30000000);
 			initDB();
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection connection = null;
